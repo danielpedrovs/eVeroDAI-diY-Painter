@@ -3,6 +3,27 @@ font-family: Arial;
 max-width: 700px;
 margin: auto;
 padding: 40px;
+font-family: Arial, sans-serif;
+background:#f3f4f6;
+margin:0;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+header{
+text-align:center;
+margin-bottom:15px;
+}
+
+header h1{
+font-size:22px;
+margin-bottom:5px;
+}
+
+header p{
+font-size:14px;
+color:#666;
 }
 
 input, select{
@@ -16,4 +37,63 @@ background: #2f855a;
 color: white;
 border: none;
 cursor: pointer;
+}
+
+.chat-container{
+width:420px;
+background:white;
+border-radius:12px;
+box-shadow:0 10px 30px rgba(0,0,0,0.1);
+padding:20px;
+}
+
+.chat-box{
+height:400px;
+overflow-y:auto;
+margin-bottom:15px;
+padding:10px;
+background:#fafafa;
+border-radius:8px;
+}
+
+.message{
+padding:10px 14px;
+margin:8px 0;
+border-radius:10px;
+max-width:75%;
+}
+
+.bot{
+background:#e5e7eb;
+}
+
+.user{
+background:#2563eb;
+color:white;
+margin-left:auto;
+}
+
+.input-area{
+display:flex;
+gap:10px;
+}
+
+input{
+flex:1;
+padding:10px;
+border-radius:8px;
+border:1px solid #ddd;
+}
+
+button{
+background:#2563eb;
+color:white;
+border:none;
+padding:10px 15px;
+border-radius:8px;
+cursor:pointer;
+}
+
+button:hover{
+background:#1d4ed8;
 }

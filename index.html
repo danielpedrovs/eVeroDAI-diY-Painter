@@ -1,8 +1,13 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
+
 <meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>AI DIY Painter Assistant</title>
 
 <link rel="stylesheet" href="style.css">
@@ -11,67 +16,61 @@
 
 <body>
 
-<h1>AI DIY Painter Assistant</h1>
+<div class="chat-container">
 
-<div class="container">
+<header>
 
-<h1>AI DIY Painter Assistant</h1>
+<h1>DIY Painter AI Assistant</h1>
 
-<p>Helping beginner painters and DIY decorators solve common wall problems.</p>
+<p>
+Ask questions about painting problems like cracks, peeling paint, or repainting walls.
+</p>
 
-<hr>
+</header>
 
-<h2>Select the Problem</h2>
+<div id="chat-box" class="chat-box">
 
-<select id="problem">
+<div class="message bot">
 
-<option value="crack">Wall Crack</option>
+<p>
+Hello 👋 I am your DIY Painter Assistant.
+</p>
 
-<option value="refresh">Refresh Wall Paint</option>
-
-<option value="peeling">Peeling Paint</option>
-
-</select>
-
-<hr>
-
-<h2>Wall Dimensions</h2>
-
-<label for="width">Wall Width (metres)</label>
-
-<br>
-
-<input type="number" id="width" placeholder="Example: 3">
-
-<br><br>
-
-<label for="height">Wall Height (metres)</label>
-
-<br>
-
-<input type="number" id="height" placeholder="Example: 2.4">
-
-<br><br>
-
-<button onclick="generateSolution()">
-
-Generate Project Plan
-
-</button>
-
-<hr>
-
-<h2>Results</h2>
-
-<div id="output">
-
-<p>Your materials, steps, and paint estimate will appear here.</p>
+<p>
+Describe your wall problem and I will suggest materials, steps and paint estimates.
+</p>
 
 </div>
+
+</div>
+
+<div class="input-area">
+
+<label for="user-input">Your question</label>
+
+<br>
+
+<input
+type="text"
+id="user-input"
+placeholder="Example: My wall has a crack and I want to repaint it"
+
+>
+
+<br><br>
+
+<button onclick="sendMessage()">
+Send
+</button>
+
+</div>
+
 </div>
 
 <script src="problems.js"></script>
+
 <script src="app.js"></script>
 
 </body>
+
 </html>
