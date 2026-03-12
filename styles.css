@@ -1,9 +1,5 @@
 body{
-font-family: Arial;
-max-width: 700px;
-margin: auto;
-padding: 40px;
-font-family: Arial, sans-serif;
+font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
 background:#f3f4f6;
 margin:0;
 display:flex;
@@ -31,22 +27,15 @@ padding: 8px;
 margin: 5px;
 }
 
-button{
-padding: 10px 20px;
-background: #2f855a;
-color: white;
-border: none;
-cursor: pointer;
-}
-
 .chat-container{
 width:420px;
 background:white;
 border-radius:12px;
 box-shadow:0 10px 30px rgba(0,0,0,0.1);
 padding:20px;
+display:flex;
+flex-direction:column;
 }
-
 .chat-box{
 height:400px;
 overflow-y:auto;
@@ -54,6 +43,8 @@ margin-bottom:15px;
 padding:10px;
 background:#fafafa;
 border-radius:8px;
+display:flex;
+flex-direction:column;
 }
 
 .message{
@@ -96,4 +87,8 @@ cursor:pointer;
 
 button:hover{
 background:#1d4ed8;
+}
+footer{
+    font-size: x-small;
+    text-align: center;
 }

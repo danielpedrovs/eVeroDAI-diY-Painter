@@ -1,52 +1,30 @@
-function sendMessage(){
+let state = "idle";
 
-let input = document.getElementById("user-input").value
-let chatBox = document.getElementById("chat-box")
+function extractDimensions(text){
 
-let userMessage = document.createElement("div")
-userMessage.className = "message user"
-userMessage.innerText = input
+let numbers = text.match(/\d+(\.\d+)?/g);
 
-chatBox.appendChild(userMessage)
+if(numbers && numbers.length >= 2){
 
-let response = ""
-
-if(input.toLowerCase().includes("crack")){
-response = "To repair a wall crack you need filler, sandpaper, primer and paint."
-}
-
-else if(input.toLowerCase().includes("peeling")){
-response = "Scrape loose paint, sand the wall, apply primer and repaint."
-}
-
-else if(input.toLowerCase().includes("paint")){
-response = "Most paints cover around 10m² per litre."
-}
-
-else{
-response = "Tell me more about the wall problem and I will help."
-}
-
-let botMessage = document.createElement("div")
-botMessage.className = "message bot"
-botMessage.innerText = response
-
-chatBox.appendChild(botMessage)
-
-document.getElementById("user-input").value=""
-
-chatBox.scrollTop = chatBox.scrollHeight
+return {
+width: parseFloat(numbers[0]),
+height: parseFloat(numbers[1])
+};
 
 }
 
-let waitingForDimensions = false;
+return null;
+
+}
 
 function sendMessage(){
 
-let input = document.getElementById("user-input").value.toLowerCase();
+let inputField = document.getElementById("user-input");
+let input = inputField.value.toLowerCase();
 let chatBox = document.getElementById("chat-box");
 
 if(input.trim() === "") return;
+
 
 // USER MESSAGE
 
@@ -56,76 +34,100 @@ userMessage.innerText = input;
 
 chatBox.appendChild(userMessage);
 
-// BOT RESPONSE
-
 let response = "";
 
-if(waitingForDimensions){
 
-let numbers = input.match(/\d+(.\d+)?/g);
+// ---------- STATE MACHINE ----------
 
-if(numbers && numbers.length >= 2){
+switch(state){
 
-let width = parseFloat(numbers[0]);
-let height = parseFloat(numbers[1]);
+case "waitingDimensionsPaint":
 
-let area = width * height;
+let dimsPaint = extractDimensions(input);
+
+if(dimsPaint){
+
+let area = dimsPaint.width * dimsPaint.height;
 let litres = (area / 10).toFixed(2);
 
 response =
 "Wall area: " + area + " m².\n\n" +
-"You will need approximately " + litres +
-" litres of paint per coat.\n\n" +
-"Most paints cover around 10m² per litre.";
+"You will need about " + litres + " litres of paint per coat.";
 
-waitingForDimensions = false;
+state = "idle";
 
 }else{
 
-response = "Please provide two numbers like: 3 by 2.4 meters.";
+response = "Please provide dimensions like: 3 by 2.4 metres.";
 
 }
+
+break;
+
+
+case "waitingDimensionsTime":
+
+let dimsTime = extractDimensions(input);
+
+if(dimsTime){
+
+let area = dimsTime.width * dimsTime.height;
+let hours = (area / 10).toFixed(1);
+
+response =
+"Wall area: " + area + " m².\n\n" +
+"Estimated work time: about " + hours + " hours.";
+
+state = "idle";
+
+}else{
+
+response = "Please provide dimensions like: 3 by 2.4 metres.";
+
+}
+
+break;
+
+
+default:
+
+if(input.includes("time") || input.includes("hours")){
+
+response =
+"To estimate the time I need the wall dimensions.\n\nExample: 3 by 2.4 metres.";
+
+state = "waitingDimensionsTime";
 
 }
 
 else if(input.includes("paint") || input.includes("how much")){
 
 response =
-"Sure. What are the wall dimensions?\n\nExample: 3 by 2.4 metres";
+"What are the wall dimensions?\n\nExample: 3 by 2.4 metres.";
 
-waitingForDimensions = true;
+state = "waitingDimensionsPaint";
 
 }
 
 else if(input.includes("crack")){
 
 response =
-"To repair a wall crack you will need:\n\n" +
-"• Wall filler\n" +
-"• Putty knife\n" +
-"• Sandpaper\n" +
-"• Primer\n" +
-"• Interior paint\n\n" +
-"Steps:\n" +
-"1 Open the crack slightly\n" +
-"2 Remove dust\n" +
-"3 Apply filler\n" +
-"4 Sand smooth\n" +
-"5 Apply primer\n" +
-"6 Paint two coats";
+"To repair a wall crack:\n\n" +
+"• Apply filler\n" +
+"• Sand smooth\n" +
+"• Apply primer\n" +
+"• Repaint";
 
 }
 
 else if(input.includes("peeling")){
 
 response =
-"Peeling paint usually means poor adhesion.\n\n" +
-"Steps:\n" +
+"Peeling paint steps:\n\n" +
 "1 Scrape loose paint\n" +
-"2 Sand the surface\n" +
-"3 Clean dust\n" +
-"4 Apply primer\n" +
-"5 Repaint";
+"2 Sand surface\n" +
+"3 Apply primer\n" +
+"4 Repaint";
 
 }
 
@@ -133,12 +135,17 @@ else{
 
 response =
 "I can help with:\n\n" +
-"• wall cracks\n" +
+"• cracks\n" +
 "• peeling paint\n" +
-"• calculating paint needed\n\n" +
-"Try asking: 'How much paint do I need?'";
+"• paint quantity\n" +
+"• time estimation";
 
 }
+
+}
+
+
+// BOT MESSAGE
 
 let botMessage = document.createElement("div");
 botMessage.className = "message bot";
@@ -146,11 +153,15 @@ botMessage.innerText = response;
 
 chatBox.appendChild(botMessage);
 
-document.getElementById("user-input").value = "";
+inputField.value = "";
 
 chatBox.scrollTop = chatBox.scrollHeight;
 
 }
+
+
+// ENTER KEY
+
 document.getElementById("user-input")
 .addEventListener("keypress", function(event){
 
