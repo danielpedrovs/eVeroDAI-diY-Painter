@@ -1,0 +1,19 @@
+body{
+font-family: Arial;
+max-width: 700px;
+margin: auto;
+padding: 40px;
+}
+
+input, select{
+padding: 8px;
+margin: 5px;
+}
+
+button{
+padding: 10px 20px;
+background: #2f855a;
+color: white;
+border: none;
+cursor: pointer;
+}

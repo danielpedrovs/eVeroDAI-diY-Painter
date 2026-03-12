@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<title>AI DIY Painter Assistant</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<h1>AI DIY Painter Assistant</h1>
+
+<div class="container">
+
+<h1>AI DIY Painter Assistant</h1>
+
+<p>Helping beginner painters and DIY decorators solve common wall problems.</p>
+
+<hr>
+
+<h2>Select the Problem</h2>
+
+<select id="problem">
+
+<option value="crack">Wall Crack</option>
+
+<option value="refresh">Refresh Wall Paint</option>
+
+<option value="peeling">Peeling Paint</option>
+
+</select>
+
+<hr>
+
+<h2>Wall Dimensions</h2>
+
+<label for="width">Wall Width (metres)</label>
+
+<br>
+
+<input type="number" id="width" placeholder="Example: 3">
+
+<br><br>
+
+<label for="height">Wall Height (metres)</label>
+
+<br>
+
+<input type="number" id="height" placeholder="Example: 2.4">
+
+<br><br>
+
+<button onclick="generateSolution()">
+
+Generate Project Plan
+
+</button>
+
+<hr>
+
+<h2>Results</h2>
+
+<div id="output">
+
+<p>Your materials, steps, and paint estimate will appear here.</p>
+
+</div>
+</div>
+
+<script src="problems.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>
