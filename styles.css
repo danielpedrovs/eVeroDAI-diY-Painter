@@ -5,7 +5,7 @@ margin:0;
 display:flex;
 justify-content:center;
 align-items:center;
-height:100vh;
+min-height:100dvh;
 }
 header{
 text-align:center;
@@ -74,6 +74,7 @@ flex:1;
 padding:10px;
 border-radius:8px;
 border:1px solid #ddd;
+font-size:16px;
 }
 
 button{
