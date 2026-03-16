@@ -1,4 +1,4 @@
-const problems = {
+export const problems = {
 
 crack: {
 materials: [

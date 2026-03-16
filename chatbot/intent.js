@@ -7,7 +7,7 @@ greeting: [
 "hi",
 "hello",
 "hey",
-"how are you",
+"how are you?",
 "good morning",
 "good afternoon"
 ],
@@ -51,13 +51,15 @@ export function detectIntent(input){
 
 input = input.toLowerCase();
 
+const words = input.split(/\W+/);
+
 for(const intent in intents){
 
 const keywords = intents[intent];
 
 for(const word of keywords){
 
-if(input.includes(word)){
+if(words.includes(word)){
 return intent;
 }
 
