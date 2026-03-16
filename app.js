@@ -33,6 +33,7 @@ chatBox.scrollTop = chatBox.scrollHeight;
 
 }
 
+window.sendMessage = sendMessage;
 
 // ENTER KEY
 
