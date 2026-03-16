@@ -12,19 +12,6 @@ greeting: [
 "good afternoon"
 ],
 
-paintQuantity: [
-"paint",
-"how much paint",
-"paint needed",
-"litres of paint"
-],
-
-timeEstimate: [
-"time",
-"hours",
-"how long",
-"work time"
-],
 
 crackRepair: [
 "crack",
@@ -43,23 +30,38 @@ colourAdvice: [
 "color",
 "paint colour",
 "paint color"
-]
+], 
+
+paintQuantity: [
+"how much paint",
+"paint needed",
+"litres of paint",
+"paint for"
+],
+
+timeEstimate: [
+"time",
+"hours",
+"how long",
+"work time",
+"how many hours"
+],
+
 
 };
 
 export function detectIntent(input){
+ 
 
-input = input.toLowerCase();
-
-const words = input.split(/\W+/);
+input = input.toLowerCase().replace(/[^\w\s]/g, ""); // remove punctuation
 
 for(const intent in intents){
 
 const keywords = intents[intent];
 
-for(const word of keywords){
+for(const keyword of keywords){
 
-if(words.includes(word)){
+    if(input.includes(keyword)){
 return intent;
 }
 
@@ -67,6 +69,5 @@ return intent;
 
 }
 
-return "Hey, could you describe better?";
-
+return "unknown";
 }

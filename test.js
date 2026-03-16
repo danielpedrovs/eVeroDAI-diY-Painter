@@ -1,22 +1,17 @@
-import { detectIntent } from "./chatbot/intent.js";
-import { handlers } from "./chatbot/handlers.js";
+import { processMessage } from "./chatbot/engine.js";
 
+const tests = [
+    "hello",
+    "how much paint 4 walls 5 by 3",
+    "my wall has a crack",
+    "the paint is peeling"
+];
 
+for(let msg of tests){
 
+    console.log("\nUser:", msg);
 
-let message = "how are you?";
+    let response = processMessage(msg);
 
-let intent = detectIntent(message);
-
-console.log("Available handlers:", Object.keys(handlers));
-
-let handler = handlers[intent] || handlers.unknown;
-let response = handler(message);
-
-
-console.log("User:", message);
-console.log("Intent:", intent);
-console.log("Response:", response);
-
-
-
+    console.log("Bot:", response);
+}
