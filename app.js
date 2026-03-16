@@ -1,5 +1,9 @@
 let state = "idle";
 
+import { detectIntent } from "./chatbot/intent.js";
+
+let intent = detectIntent(userInput);
+
 function extractDimensions(text){
 
 let numbers = text.match(/\d+(\.\d+)?/g);
