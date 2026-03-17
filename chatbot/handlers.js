@@ -1,6 +1,6 @@
 import { responses } from "./responses.js";
 import { extractDimensions, extractRatePerSquareMeter } from "./parser.js";
-import { estimateLabourCost, formatMoney} from "./costLibrary.js";
+import { estimateLabourCost, formatMoney, getDefaultRatePerM2 } from "./costLibrary.js";
 import { problems } from "./problems.js";
 import { knowledge } from "./knowledge.js";
 
@@ -91,7 +91,7 @@ timeEstimate(){
 }
 
 let area = dims.width * dims.height;
-let rate = extractRatePerSquareMeter(message);
+let rate = extractRatePerSquareMeter(message) || getDefaultRatePerM2();
 let total = estimateLabourCost(area, rate);
 
 return `estimated labour cost:
