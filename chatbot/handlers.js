@@ -6,128 +6,137 @@ import { knowledge } from "./knowledge.js";
 
 function formatSolution(problem){
 
-let materials = problem.materials || [];
-let steps = problem.steps || [];
+  let materials = problem.materials || [];
+  let steps = problem.steps || [];
 
-return "Materials needed:\n\n" +
-materials.map(m => "• " + m).join("\n") +
-
-"\n\nSteps:\n\n" +
-steps.map((s,i) => (i+1) + ". " + s).join("\n");
-
+  return "Materials needed:\n\n" +
+    materials.map(m => "• " + m).join("\n") +
+    "\n\nSteps:\n\n" +
+    steps.map((s,i) => (i+1) + ". " + s).join("\n");
 }
 
 function solveProblem(message){
-    for(let key in knowledge){
-        let problem = knowledge[key];
-         // ✅ ONLY process items that actually have steps/materials
-        if(!problem.materials && !problem.steps){
-            continue;
-        }
+  for(let key in knowledge){
+    let problem = knowledge[key];
 
-        for (let word of problem.keywords){
-            if(message.includes(word)){
-                return formatSolution(problem);
-            }
-        }
-            }
-            return  null;
-        }
+    if(!problem.materials && !problem.steps){
+      continue;
+    }
+
+    for (let word of problem.keywords){
+      if(message.includes(word)){
+        return formatSolution(problem);
+      }
+    }
+  }
+  return null;
+}
 
 export const handlers = {
 
-greeting(){
+  greeting(){
     return responses.greeting;
-},
+  },
 
-paintQuantity(message){
+  // 🎨 PAINT QUANTITY
+  paintQuantity(message){
     let dims = extractDimensions(message);
 
     if(!dims){
-    return responses.paintQuantity;
-}
-/* 
-dims expected:
-width
-length
-height
-walls (optional)
-*/
+      return responses.paintQuantity;
+    }
 
-let width = dims.width;
-let length = dims.length || width; // if length not provided, assume it's a square
-let height = dims.height || 2.4; // default height if not provided
-// calculate perimeter
-let perimeter = 2 * (width + length);
+    let width = dims.width;
+    let length = dims.length || width;
+    let height = dims.height || 2.4;
+    let walls = dims.walls || 4;
 
-//wall area
-let wallsArea = perimeter * height;
-// ceiling area
-let ceilingArea = width * length;
-//total paintable 
-let totalArea = wallsArea + ceilingArea;
+    let wallsArea;
 
-//paint coverage: 1 litre covers 10 m²
-let litres = (totalArea / 10).toFixed(2);
-return `paintable surfaces: 
+    // ✅ If user specified number of walls
+    if(dims.walls){
+      wallsArea = width * height * walls;
+    } else {
+      // ✅ Room-based calculation
+      let perimeter = 2 * (width + length);
+      wallsArea = perimeter * height;
+    }
+
+    let ceilingArea = width * length;
+    let totalArea = wallsArea + ceilingArea;
+
+    let litres = (totalArea / 10).toFixed(2);
+
+    return `paintable surfaces:
 
 walls: ${wallsArea.toFixed(1)} m²
 ceiling: ${ceilingArea.toFixed(1)} m²
 total paintable area: ${totalArea.toFixed(1)} m²
-You will need about ${litres} litres of paint per coat.`;
-},
 
-peelingPaint(){
+You will need about ${litres} litres of paint per coat.`;
+  },
+
+  peelingPaint(){
     return responses.peelingPaint;
-},
-timeEstimate(){
+  },
+
+  timeEstimate(){
     return responses.timeEstimate;
-},
-    costEstimate(message){
+  },
+
+  // 💰 COST ESTIMATE
+  costEstimate(message){
     let dims = extractDimensions(message);
 
     if(!dims){
-    return responses.costEstimate;
-}
+      return responses.costEstimate;
+    }
 
-let area = dims.width * dims.height;
-let rate = extractRatePerSquareMeter(message) || getDefaultRatePerM2();
-let total = estimateLabourCost(area, rate);
+    let width = dims.width;
+    let height = dims.height || 2.4;
+    let walls = dims.walls || 1;
 
-return `estimated labour cost:
+    // ✅ FIXED: include walls
+    let area = width * height * walls;
+
+    let rate = extractRatePerSquareMeter(message) || getDefaultRatePerM2();
+    let total = estimateLabourCost(area, rate);
+
+    return `estimated labour cost:
 
 area: ${area.toFixed(1)} m²
 rate: ${formatMoney(rate)} per m²
 total: ${formatMoney(total)}`;
-},
+  },
 
-
-crackRepair(){
+  crackRepair(){
     let p = problems.crack;
-    return "Materials needed:\n" + p.materials.map(m => `- ${m}`).join("\n") + 
-    "\n\nSteps:\n" + p.steps.map((s, i) => `${i+1}. ${s}`).join("\n");
-},
+    return "Materials needed:\n" +
+      p.materials.map(m => `- ${m}`).join("\n") +
+      "\n\nSteps:\n" +
+      p.steps.map((s, i) => `${i+1}. ${s}`).join("\n");
+  },
 
-smallTalk(){
+  smallTalk(){
     return knowledge.smallTalk.response;
-},
+  },
 
-thanks(){
+  thanks(){
     return knowledge.thanks.response;
-},
+  },
 
-goodbye(){
+  goodbye(){
     return knowledge.goodbye.response;
-},
-    
-unknown(message){
+  },
 
-let solution = solveProblem(message);
+  unknown(message){
+    let solution = solveProblem(message);
 
-if(solution){
-return solution;
-}
+    if(solution){
+      return solution;
+    }
+
     return responses.unknown;
-}
+  }
 
 };
