@@ -2,6 +2,10 @@ import { knowledge } from "./knowledge.js";
 
 export function detectIntent(input){
 
+// ignore weak/common words
+const stopWords = ["how", "what", "is", "the", "a", "an", "are",
+"you", "it", "will", "to", "for", "of", "in"];
+  
 // Normalize message
 input = input
 .toLowerCase()
@@ -11,9 +15,8 @@ input = input
 .join(" ")
 .trim();;
 
-// ignore weak/common words
-const stopWords = ["how", "what", "is", "the", "a", "an", "are",
-"you", "it", "will", "to", "for", "of", "in"];
+
+
 
 let bestMatch = "unknown";
 let bestScore = 0;
