@@ -32,11 +32,6 @@ if(priorityIntent){
   return priorityIntent;
 }
 
-  const priorityIntent = detectPriority(input);
-if(priorityIntent){
-  return priorityIntent;
-}
-
 
 let bestMatch = "unknown";
 let bestScore = 0;
