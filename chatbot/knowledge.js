@@ -7,7 +7,7 @@ keywords: [
 "how are you doing",
 "you ok",
 "how is it going",
-  "hows it going
+  "hows it going"
 ],
 
 response: "I'm doing great, thanks! Ready to help with your painting project."
