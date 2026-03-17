@@ -19,6 +19,11 @@ steps.map((s,i) => (i+1) + ". " + s).join("\n");
 function solveProblem(message){
     for(let key in knowledge){
         let problem = knowledge[key];
+         // ✅ ONLY process items that actually have steps/materials
+        if(!problem.materials && !problem.steps){
+            continue;
+        }
+
         for (let word of problem.keywords){
             if(message.includes(word)){
                 return formatSolution(problem);
