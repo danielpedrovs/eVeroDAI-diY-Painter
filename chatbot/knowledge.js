@@ -137,6 +137,21 @@ keywords: [
 response:
 "One litre of paint usually covers around 10 square meters depending on the surface."
 },
+  
+costEstimate: {
+keywords: [
+"cost",
+"price",
+"quote",
+"labour cost",
+"how much will it cost",
+"estimate cost",
+"cost to paint"
+],
+
+response:
+"I can estimate labour cost if you share dimensions like 5 by 3 metres. You can also include a rate per m2."
+},
 
 timeEstimate: {
 keywords: [
