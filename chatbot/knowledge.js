@@ -1,7 +1,37 @@
 // knowledge.js
 
 export const knowledge = {
+smallTalk: {
+keywords: [
+"how are you",
+"how are you doing",
+"you ok",
+"how's it going"
+],
 
+response: "I'm doing great, thanks! Ready to help with your painting project."
+},
+
+thanks: {
+keywords: [
+"thanks",
+"thank you",
+"cheers"
+],
+
+response: "You're welcome! Let me know if you need anything else."
+},
+
+goodbye: {
+keywords: [
+"bye",
+"goodbye",
+"see you"
+],
+
+response: "Goodbye! Good luck with your project 🎨"
+},
+  
 greeting: {
 keywords: [
 "hi",
