@@ -9,11 +9,11 @@ message = message.toLowerCase();
 //detect intent
 let intent = detectIntent(message);
 // if no intent
-if(intent === "unknow" && lastIntent "paintQuantity"){
+if(intent === "unknown" && lastIntent === "paintQuantity"){
     intent = "paintQuantity";
     }
 let handler = handlers[intent] || handlers.unknown;
-
+let lastIntent = null;
 lastIntent = intent;
 
 
