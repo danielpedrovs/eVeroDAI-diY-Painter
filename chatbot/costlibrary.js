@@ -1,5 +1,8 @@
+export function getDefaultRatePerM2(){
+  return 15;
+}
 
-export function estimateLabourCost(area, ratePerM2 = 15){
+export function estimateLabourCost(area, ratePerM2 = getDefaultRatePerM2()){
   const total = area * ratePerM2;
   return Number(total.toFixed(2));
 }
