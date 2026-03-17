@@ -1,11 +1,25 @@
 import { knowledge } from "./knowledge.js";
 
+
+// 🔥 priority rules (fast + accurate)
+function detectPriority(input){
+  if(input.includes("how are you")) return "smallTalk";
+  if(input.includes("how long")) return "timeEstimate";
+  if(input.includes("service") || input.includes("what do you do")) return "services";
+  if(input.includes("thank")) return "thanks";
+  if(input.includes("bye")) return "goodbye";
+  return null;
+}
+
+
+
 export function detectIntent(input){
 
 // ignore weak/common words
 const stopWords = ["how", "what", "is", "the", "a", "an", "are",
 "you", "it", "will", "to", "for", "of", "in"];
-  
+
+
 // Normalize message
 input = input
 .toLowerCase()
