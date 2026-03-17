@@ -1,6 +1,7 @@
 // knowledge.js
 
 export const knowledge = {
+services:{
 keywords: [
 "services",
 "what do you do",
