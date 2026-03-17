@@ -1,7 +1,7 @@
 import { responses } from "./responses.js";
 import { extractDimensions } from "./parser.js";
 import { problems } from "./problems.js";
-import knowledge from "./knowledge.js";
+import { knowledge } from "./knowledge.js";
 
 function formatSolution(problem){
 
