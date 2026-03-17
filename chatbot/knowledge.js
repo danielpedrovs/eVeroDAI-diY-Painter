@@ -135,8 +135,7 @@ keywords: [
 ],
 
 response:
-"A single wall normally takes 2–4 hours including preparation and two coats."
-"A standard room usually takes 1–2 days including preparation and painting."
+"A single wall normally takes 2–4 hours including preparation and two coats. standard room usually takes 1–2 days including preparation and painting."
 }
 }
 
