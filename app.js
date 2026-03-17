@@ -37,11 +37,14 @@ window.sendMessage = sendMessage;
 
 // ENTER KEY
 
-document.getElementById("user-input")
-.addEventListener("keypress", function(event){
+document.addEventListener("DOMContentLoaded", () => {
+let input = document.getElementById("user-input");
+input.addEventListener("keypress", function(event){
 
 if(event.key === "Enter"){
 sendMessage();
 }
+
+});
 
 });
