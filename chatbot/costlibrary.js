@@ -1,6 +1,5 @@
-export const DEFAULT_RATE_PER_M2 = 15;
 
-export function estimateLabourCost(area, ratePerM2 = DEFAULT_RATE_PER_M2){
+export function estimateLabourCost(area, ratePerM2 = 15){
   const total = area * ratePerM2;
   return Number(total.toFixed(2));
 }
