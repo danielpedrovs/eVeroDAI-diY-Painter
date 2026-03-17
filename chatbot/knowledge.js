@@ -1,12 +1,15 @@
 // knowledge.js
 
 export const knowledge = {
-services: {
 keywords: [
 "services",
-"help with",
-"do you do",
+"what do you do",
+"what can you do",
+"your services",
+"offer",
+"help",
 "hire",
+"what you do"
 ],
 
 response: "You can hire me for paint, decorate, fix some cracks, colour advice and so on... Do you have the paint quantity? i can tell you know, just ask me how much paint."
