@@ -5,6 +5,7 @@ import { knowledge } from "./knowledge.js";
 function detectPriority(input){
   if(input.includes("how are you")) return "smallTalk";
   if(input.includes("how long")) return "timeEstimate";
+  if(input.includes("cost") || input.includes("price") || input.includes("quote")) return "costEstimate";
   if(input.includes("service") || input.includes("what do you do")) return "services";
   if(input.includes("thank")) return "thanks";
   if(input.includes("bye")) return "goodbye";
@@ -27,6 +28,11 @@ input = input
 .trim();
 
 const priorityIntent = detectPriority(input);
+if(priorityIntent){
+  return priorityIntent;
+}
+
+  const priorityIntent = detectPriority(input);
 if(priorityIntent){
   return priorityIntent;
 }
