@@ -86,7 +86,18 @@ crackRepair(){
     "\n\nSteps:\n" + p.steps.map((s, i) => `${i+1}. ${s}`).join("\n");
 },
 
+smallTalk(){
+    return knowledge.smallTalk.response;
+},
 
+thanks(){
+    return knowledge.thanks.response;
+},
+
+goodbye(){
+    return knowledge.goodbye.response;
+},
+    
 unknown(message){
 
 let solution = solveProblem(message);
