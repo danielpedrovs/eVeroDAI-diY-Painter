@@ -1,14 +1,22 @@
 import { detectIntent } from "./intent.js";
 import { handlers } from "./handlers.js";
 
+let intent = null;
+
 export function processMessage(message){
+message = message.toLowerCase();
 
+//detect intent
 let intent = detectIntent(message);
-
+// if no intent
+if(intent === "unknow" && lastIntent "paintQuantity"){
+    intent = "paintQuantity";
+    }
 let handler = handlers[intent] || handlers.unknown;
 
-let response = handler(message);
+lastIntent = intent;
 
-return response;
+
+return handler(message);
 
 }
