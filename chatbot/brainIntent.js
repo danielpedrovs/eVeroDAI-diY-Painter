@@ -1,28 +1,45 @@
-const net = new brain.NeuralNetwork();
+import { detectIntent } from "./intent.js";
+import { handlers } from "./handlers.js";
 
-net.train([
-  { input: {paint:1}, output:{paintQuantity:1}},
-  { input: {room:1}, output:{paintQuantity:1}},
-  { input: {wall:1}, output:{paintQuantity:1}},
-  { input: {hello:1}, output:{greeting:1}},
-  { input: {hi:1}, output:{greeting:1}}
-]);
+let lastIntent = null;
 
-export function detectIntentBrain(message){
+// simple AI intent detection
+function detectIntentBrain(message){
 
-  message = message.toLowerCase();
+message = message.toLowerCase();
 
-  const input = {
-    paint: message.includes("paint") ? 1 : 0,
-    room: message.includes("room") ? 1 : 0,
-    wall: message.includes("wall") ? 1 : 0,
-    hello: message.includes("hello") ? 1 : 0,
-    hi: message.includes("hi") ? 1 : 0
-  };
+if(message.includes("paint") || message.includes("wall") || message.includes("room")){
+    return "paintQuantity";
+}
 
-  const result = net.run(input);
+if(message.includes("hello") || message.includes("hi")){
+    return "greeting";
+}
 
-  let intent = Object.keys(result).reduce((a,b)=>result[a] > result[b] ? a : b);
+return "unknown";
+}
 
-  return intent;
+export function processMessage(message){
+
+message = message.toLowerCase();
+
+// try AI detection
+let intent = detectIntentBrain(message);
+
+// fallback to keyword detection
+if(intent === "unknown"){
+    intent = detectIntent(message);
+}
+
+// keep conversation context
+if(intent === "unknown" && lastIntent === "paintQuantity"){
+    intent = "paintQuantity";
+}
+
+let handler = handlers[intent] || handlers.unknown;
+
+lastIntent = intent;
+
+return handler(message);
+
 }
