@@ -31,7 +31,17 @@ export function processMessage(message){
   if(hasDimensions && session.lastIntent){
     intent = session.lastIntent;
   }
+// 🔥 ALLOW EXPLICIT SWITCH
+const isSwitchingIntent =
+  message.includes("cost") ||
+  message.includes("price") ||
+  message.includes("quote") ||
+  message.includes("paint") ||
+  message.includes("time");
 
+if(isSwitchingIntent){
+    intent = detectIntent(message);
+}
   // optional clarification
   if(intent === "unknown" && hasDimensions && !session.lastIntent){
     return "Got it — is this for paint quantity or cost estimation?";
