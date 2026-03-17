@@ -109,12 +109,29 @@ steps: [
 ]
 },
 
+paintCoats: {
+  keywords: [
+    "coats",
+    "how many coats",
+    "paint coats",
+    "number of coats",
+    "coats needed"
+  ],
+
+  response:
+    "For most walls, 2 coats are recommended for a solid and even finish. If the colour change is strong (e.g. dark to light), 3 coats may be needed."
+},
+
 colourAdvice: {
 keywords: [
 "colour",
 "color",
-"paint colour",
-"paint color"
+"best paint colour",
+"paint color",
+"col",
+"dulux",
+"white",
+"red"
 ],
 
 response:
