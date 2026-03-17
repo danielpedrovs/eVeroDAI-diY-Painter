@@ -26,7 +26,10 @@ input = input
 .replace(/[^\w\s]/g, "")
 .trim();
 
-
+const priorityIntent = detectPriority(input);
+if(priorityIntent){
+  return priorityIntent;
+}
 
 
 let bestMatch = "unknown";
