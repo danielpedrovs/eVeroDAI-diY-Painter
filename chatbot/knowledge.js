@@ -125,8 +125,11 @@ timeEstimate: {
 keywords: [
 "time",
 "hours",
+"long",
+"take",
+"duration",
+"estimate",
 "how long",
-"work time",
 "how many hours"
 ],
 
