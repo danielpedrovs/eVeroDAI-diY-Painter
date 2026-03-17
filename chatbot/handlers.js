@@ -5,11 +5,14 @@ import { knowledge } from "./knowledge.js";
 
 function formatSolution(problem){
 
+let materials = problem.materials || [];
+let steps = problem.steps || [];
+
 return "Materials needed:\n\n" +
-problem.materials.map(m => "• " + m).join("\n") +
+materials.map(m => "• " + m).join("\n") 
 
 "\n\nSteps:\n\n" +
-problem.steps.map((s,i) => (i+1) + ". " + s).join("\n");
+steps.map((s,i) => (i+1) + ". " + s).join("\n");
 
 }
 
