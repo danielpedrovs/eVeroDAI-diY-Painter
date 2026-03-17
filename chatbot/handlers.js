@@ -124,7 +124,11 @@ total: ${formatMoney(total)}`;
   thanks(){
     return knowledge.thanks.response;
   },
-
+  
+  paintCoats(){
+  return knowledge.paintCoats.response;
+},
+  
   goodbye(){
     return knowledge.goodbye.response;
   },
