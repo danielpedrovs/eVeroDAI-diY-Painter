@@ -15,7 +15,7 @@ keywords: [
 response: "You can hire me for paint, decorate, fix some cracks, colour advice and so on... Do you have the paint quantity? i can tell you know, just ask me how much paint."
 },
   
-  smallTalk: {
+smallTalk: {
 keywords: [
 "how are you",
 "how are you doing",
