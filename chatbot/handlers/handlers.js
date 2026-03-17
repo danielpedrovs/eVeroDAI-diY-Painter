@@ -1,8 +1,10 @@
-import { responses } from "./responses.js";
-import { extractDimensions, extractRatePerSquareMeter } from "./parser.js";
-import { estimateLabourCost, formatMoney, getDefaultRatePerM2 } from "./costlibrary.js";
-import { problems } from "./problems.js";
-import { knowledge } from "./knowledge.js";
+import { responses } from "../data/responses.js";
+import { extractDimensions, extractRatePerSquareMeter } from "../domain/parser.js";
+import { estimateLabourCost, formatMoney, getDefaultRatePerM2 } from "../domain/costlibrary.js";
+import { problems } from "../data/problems.js";
+import { handlePaintFlow } from "../flows/paintFlow.js";
+import { knowledge } from "../data/knowledge.js";
+import { session } from "../core/session.js";
 
 function formatSolution(problem){
 
@@ -39,42 +41,24 @@ export const handlers = {
   },
 
   // 🎨 PAINT QUANTITY
-  paintQuantity(message){
-    let dims = extractDimensions(message);
+paintQuantity(message){
+    
+const result = handlePaintFlow(message, session);
 
-    if(!dims){
-      return responses.paintQuantity;
-    }
-
-    let width = dims.width;
-    let length = dims.length || width;
-    let height = dims.height || 2.4;
-    let walls = dims.walls || 4;
-
-    let wallsArea;
-
-    // ✅ If user specified number of walls
-    if(dims.walls){
-      wallsArea = width * height * walls;
-    } else {
-      // ✅ Room-based calculation
-      let perimeter = 2 * (width + length);
-      wallsArea = perimeter * height;
-    }
-
-    let ceilingArea = width * length;
-    let totalArea = wallsArea + ceilingArea;
-
-    let litres = (totalArea / 10).toFixed(2);
+  if(typeof result === "string"){
+    return result;
+  }
 
     return `paintable surfaces:
 
-walls: ${wallsArea.toFixed(1)} m²
-ceiling: ${ceilingArea.toFixed(1)} m²
-total paintable area: ${totalArea.toFixed(1)} m²
+walls: ${result.wallsArea.toFixed(1)} m²
+ceiling: ${result.ceilingArea.toFixed(1)} m²
+total: ${result.totalArea.toFixed(1)} m²
 
-You will need about ${litres} litres of paint per coat.`;
-  },
+You will need:
+
+• ${result.litresPerCoat.toFixed(1)}L per coat`;
+},
 
   peelingPaint(){
     return responses.peelingPaint;
@@ -102,11 +86,12 @@ You will need about ${litres} litres of paint per coat.`;
     let rate = extractRatePerSquareMeter(message) || getDefaultRatePerM2();
     let total = estimateLabourCost(area, rate);
 
-    return `estimated labour cost:
+    return `its just an market estimated labour cost:
 
 area: ${area.toFixed(1)} m²
 rate: ${formatMoney(rate)} per m²
-total: ${formatMoney(total)}`;
+total: ${formatMoney(total)}, please contact 
+the painter for accurate costs`;
   },
 
   crackRepair(){

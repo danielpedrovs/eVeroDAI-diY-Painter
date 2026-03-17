@@ -1,17 +1,27 @@
 import { detectIntentBrain } from "./brainIntent.js";
 import { detectIntent } from "./intent.js";
-import { handlers } from "./handlers.js";
-import { extractDimensions } from "./parser.js";
+import { handlers } from "../handlers/handlers.js";
+import { extractDimensions } from "../domain/parser.js";
+import { session } from "./session.js";
 
-let session = {
-  lastIntent: null,
-  dimensions: null
-};
+
 
 export function processMessage(message){
 
   message = message.toLowerCase().trim();
+  
+const isYes = ["yes", "yeah", "yep"].includes(message);
+const isNo = ["no", "nope"].includes(message);
 
+    if(isYes || isNo){
+
+    if(session.lastIntent === "paintQuantity"){
+      session.includeCeiling = isYes;
+
+      return handlers.paintQuantity(message);
+    }
+
+  }
   // 1. detect intent
   let intent = detectIntentBrain(message);
 

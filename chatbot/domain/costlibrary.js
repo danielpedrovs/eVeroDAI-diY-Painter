@@ -1,5 +1,5 @@
 export function getDefaultRatePerM2(){
-  return 15;
+  return 13;
 }
 
 export function estimateLabourCost(area, ratePerM2 = getDefaultRatePerM2()){

@@ -1,17 +1,22 @@
-import { knowledge } from "./knowledge.js";
+import { knowledge } from "../data/knowledge.js";
 
-
-// 🔥 priority rules (fast + accurate)
 function detectPriority(input){
-  if(input.includes("how are you")) return "smallTalk";
+
+  if(input.includes("peeling")) return "peelingPaint";
+  if(input.includes("crack")) return "crackRepair";
+
+  if(input.includes("paint") || input.includes("how much paint")){
+    return "paintQuantity";
+  }
+
   if(input.includes("how long")) return "timeEstimate";
   if(input.includes("cost") || input.includes("price") || input.includes("quote")) return "costEstimate";
-  if(input.includes("service") || input.includes("what do you do")) return "services";
+  if(input.includes("service")) return "services";
   if(input.includes("thank")) return "thanks";
   if(input.includes("bye")) return "goodbye";
+
   return null;
 }
-
 
 
 export function detectIntent(input){
