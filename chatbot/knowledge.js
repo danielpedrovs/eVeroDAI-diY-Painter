@@ -77,10 +77,14 @@ response:
 
 paintQuantity: {
 keywords: [
+"paint",
 "how much paint",
 "paint needed",
 "litres of paint",
-"paint for"
+"paint for",
+"paint my flat",
+"flat",
+"bedroom"
 ],
 
 response:
