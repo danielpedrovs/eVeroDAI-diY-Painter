@@ -36,3 +36,17 @@ height: parseFloat(match[3])
 return null;
 
 }
+
+export function extractRatePerSquareMeter(text){
+
+text = text.toLowerCase();
+
+let match = text.match(/(\d+(\.\d+)?)\s*(per\s*m2|\/m2|per\s*sqm)/);
+
+if(match){
+return parseFloat(match[1]);
+}
+
+return null;
+
+}
