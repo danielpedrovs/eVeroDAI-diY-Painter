@@ -1,73 +1,32 @@
-
 // intent.js
 
-export const intents = {
-
-greeting: [
-"hi",
-"hello",
-"hey",
-"how are you?",
-"good morning",
-"good afternoon"
-],
-
-
-crackRepair: [
-"crack",
-"wall crack",
-"repair crack"
-],
-
-peelingPaint: [
-"peeling",
-"peeling paint",
-"paint peeling"
-],
-
-colourAdvice: [
-"colour",
-"color",
-"paint colour",
-"paint color"
-], 
-
-paintQuantity: [
-"how much paint",
-"paint needed",
-"litres of paint",
-"paint for"
-],
-
-timeEstimate: [
-"time",
-"hours",
-"how long",
-"work time",
-"how many hours"
-],
-
-
-};
+import { knowledge } from "./knowledge.js";
 
 export function detectIntent(input){
- 
 
-input = input.toLowerCase().replace(/[^\w\s]/g, ""); // remove punctuation
+// Normalize message
+input = input
+.toLowerCase()
+.replace(/[^\w\s]/g, "")
+.trim();
 
-for(const intent in intents){
+// Loop through knowledge topics
+for(const topic in knowledge){
 
-const keywords = intents[intent];
+const keywords = knowledge[topic].keywords;
 
+// Check keywords
 for(const keyword of keywords){
 
-    if(input.includes(keyword)){
-return intent;
+if(input.includes(keyword)){
+return topic;
 }
 
 }
 
 }
 
+// If nothing matches
 return "unknown";
+
 }
