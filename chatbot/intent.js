@@ -31,7 +31,10 @@ const priorityIntent = detectPriority(input);
 if(priorityIntent){
   return priorityIntent;
 }
-
+  // detect dimensions like "5 by 3", "4x2", "3 2.4"
+if (/\d/.test(input)) {
+  return "costEstimate";
+}
 
 let bestMatch = "unknown";
 let bestScore = 0;
