@@ -1,21 +1,24 @@
 import { detectIntent } from "./intent.js";
 import { handlers } from "./handlers.js";
 
-let intent = null;
+let lastIntent = null; // conversation memory
 
 export function processMessage(message){
+
 message = message.toLowerCase();
 
-//detect intent
+// detect intent
 let intent = detectIntent(message);
-// if no intent
+
+// if user sends dimensions after asking about paint
 if(intent === "unknown" && lastIntent === "paintQuantity"){
     intent = "paintQuantity";
-    }
-let handler = handlers[intent] || handlers.unknown;
-let lastIntent = null;
-lastIntent = intent;
+}
 
+let handler = handlers[intent] || handlers.unknown;
+
+// store last intent
+lastIntent = intent;
 
 return handler(message);
 
