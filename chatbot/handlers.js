@@ -1,6 +1,6 @@
 import { responses } from "./responses.js";
 import { extractDimensions, extractRatePerSquareMeter } from "./parser.js";
-import { estimateLabourCost, formatMoney, getDefaultRatePerM2 } from "./costLibrary.js";
+import { estimateLabourCost, formatMoney, getDefaultRatePerM2 } from "./costlibrary.js";
 import { problems } from "./problems.js";
 import { knowledge } from "./knowledge.js";
 
