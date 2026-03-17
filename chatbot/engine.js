@@ -27,7 +27,16 @@ if(!intent || intent === "unknown"){
 
 // detect if message contains dimensions
 const hasDimensions = /\d+(\.\d+)?\s*(x|by)?\s*\d+/.test(message);
+  
+// 🔥 RULE 1: if last intent is paint → STAY in paint (strong priority)
+if(session.lastIntent === "paintQuantity" && hasDimensions){
+    intent = "paintQuantity";
+}
 
+// 🔥 RULE 2: otherwise, continue previous intent
+else if(hasDimensions && session.lastIntent){
+    intent = session.lastIntent;
+}
 // if user sends dimensions after a previous intent
 if(intent === "unknown" && hasDimensions && lastIntent){
     intent = lastIntent;
