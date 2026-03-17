@@ -51,7 +51,7 @@ bestMatch = topic;
 }
 
 // stricter confidence threshold
-if(bestScore < 3){
+if(bestScore < 2){
 return "unknown";
 }
 
