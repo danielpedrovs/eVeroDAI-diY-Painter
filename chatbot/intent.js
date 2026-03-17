@@ -6,10 +6,14 @@ export function detectIntent(input){
 input = input
 .toLowerCase()
 .replace(/[^\w\s]/g, "")
-.trim();
+.split(" ")
+.filter(word => !stopWords.includes(word))
+.join(" ")
+.trim();;
 
 // ignore weak/common words
-const stopWords = ["how", "are", "you", "the", "is", "a", "i"];
+const stopWords = ["how", "what", "is", "the", "a", "an", "are",
+"you", "it", "will", "to", "for", "of", "in"];
 
 let bestMatch = "unknown";
 let bestScore = 0;
