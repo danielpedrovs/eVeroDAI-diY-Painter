@@ -15,17 +15,25 @@ let intent = detectIntentBrain(message);
 if(!intent || intent === "unknown"){
     intent = detectIntent(message);
 }
+    
 
-// if user sends dimensions after asking about paint
-if(intent === "unknown" && lastIntent === "paintQuantity"){
-    intent = "paintQuantity";
+// detect if message contains dimensions
+const hasDimensions = /\d+(\.\d+)?\s*(x|by)?\s*\d+/.test(message);
+
+// if user sends dimensions after a previous intent
+if(intent === "unknown" && hasDimensions && lastIntent){
+    intent = lastIntent;
 }
+     if(intent === "unknown" && hasDimensions && !lastIntent){
+      return "Got it — is this for paint quantity or cost estimation?";
+  }
 
 let handler = handlers[intent] || handlers.unknown;
 
 // store last intent
-lastIntent = intent;
-
+if(intent !== "unknown"){
+    lastIntent = intent;
+}
 return handler(message);
 
 }
