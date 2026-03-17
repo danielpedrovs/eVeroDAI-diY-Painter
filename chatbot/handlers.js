@@ -1,5 +1,6 @@
 import { responses } from "./responses.js";
-import { extractDimensions } from "./parser.js";
+import { extractDimensions, extractRatePerSquareMeter } from "./parser.js";
+import { estimateLabourCost, formatMoney, DEFAULT_RATE_PER_M2 } from "./costLibrary.js";
 import { problems } from "./problems.js";
 import { knowledge } from "./knowledge.js";
 
@@ -82,6 +83,24 @@ peelingPaint(){
 timeEstimate(){
     return responses.timeEstimate;
 },
+    costEstimate(message){
+    let dims = extractDimensions(message);
+
+    if(!dims){
+    return responses.costEstimate;
+}
+
+let area = dims.width * dims.height;
+let rate = extractRatePerSquareMeter(message) || DEFAULT_RATE_PER_M2;
+let total = estimateLabourCost(area, rate);
+
+return `estimated labour cost:
+
+area: ${area.toFixed(1)} m²
+rate: ${formatMoney(rate)} per m²
+total: ${formatMoney(total)}`;
+},
+
 
 crackRepair(){
     let p = problems.crack;
