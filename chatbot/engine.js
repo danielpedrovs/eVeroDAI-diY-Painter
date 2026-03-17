@@ -8,12 +8,13 @@ export function processMessage(message){
 
 message = message.toLowerCase();
 
+// try neural network first
 let intent = detectIntentBrain(message);
 
-
-
-// detect intent
-let intent = detectIntent(message);
+// fallback to keyword detection
+if(!intent || intent === "unknown"){
+    intent = detectIntent(message);
+}
 
 // if user sends dimensions after asking about paint
 if(intent === "unknown" && lastIntent === "paintQuantity"){
