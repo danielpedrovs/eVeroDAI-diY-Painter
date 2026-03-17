@@ -107,6 +107,7 @@ response:
 
 paintQuantity: {
 keywords: [
+  "decorate",
 "paint",
 "how much paint",
 "paint needed",
