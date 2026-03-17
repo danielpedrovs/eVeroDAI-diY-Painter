@@ -1,5 +1,3 @@
-// intent.js
-
 import { knowledge } from "./knowledge.js";
 
 export function detectIntent(input){
@@ -10,6 +8,9 @@ input = input
 .replace(/[^\w\s]/g, "")
 .trim();
 
+// ignore weak/common words
+const stopWords = ["how", "are", "you", "the", "is", "a", "i"];
+
 let bestMatch = "unknown";
 let bestScore = 0;
 
@@ -18,31 +19,35 @@ for(const topic in knowledge){
 
 const keywords = knowledge[topic].keywords;
 let score = 0;
+
 // Check keywords
 for(const keyword of keywords){
 
-// full phrase match (strong)
+// strong phrase match
 if(input.includes(keyword)){
 score += 3;
 }
-// partial word match (flexible)
+
+// partial word match (filtered)
 const words = keyword.split(" ");
 for(const word of words){
-if(input.includes(word)){
+if(!stopWords.includes(word) && input.includes(word)){
 score += 1;
 }
 }
 
 }
-  // keep best match
+
+// keep best match
 if(score > bestScore){
 bestScore = score;
 bestMatch = topic;
 }
 
 }
-  // confidence threshold
-if(bestScore < 2){
+
+// stricter confidence threshold
+if(bestScore < 3){
 return "unknown";
 }
 
