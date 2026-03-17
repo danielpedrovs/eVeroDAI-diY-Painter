@@ -86,12 +86,15 @@ You will need:
     let rate = extractRatePerSquareMeter(message) || getDefaultRatePerM2();
     let total = estimateLabourCost(area, rate);
 
-    return `its just an market estimated labour cost:
+   return `Estimated labour cost (market average):
 
-area: ${area.toFixed(1)} m²
-rate: ${formatMoney(rate)} per m²
-total: ${formatMoney(total)}, please contact 
-the painter for accurate costs`;
+area: ${area.toFixed(1)} m²  
+rate: ${formatMoney(rate)} per m²  
+total: ${formatMoney(total)}  
+
+This is an approximate estimate based on standard market rates.
+
+👉 Would you like to be contacted by our team for an accurate quote?`;
   },
 
   crackRepair(){
