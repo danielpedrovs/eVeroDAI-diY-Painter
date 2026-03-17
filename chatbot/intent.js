@@ -10,9 +10,6 @@ const stopWords = ["how", "what", "is", "the", "a", "an", "are",
 input = input
 .toLowerCase()
 .replace(/[^\w\s]/g, "")
-.split(" ")
-.filter(word => !stopWords.includes(word))
-.join(" ")
 .trim();
 
 
