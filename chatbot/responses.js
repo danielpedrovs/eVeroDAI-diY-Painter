@@ -12,8 +12,11 @@ crackRepair:
 
 peelingPaint:
 "Peeling paint steps:\n1 Scrape loose paint\n2 Sand surface\n3 Apply primer\n4 Repaint",
-
+  
+timeEstimate:
+"A single wall normally takes 2–4 hours including preparation and two coats. A standard room usually takes 1–2 days including preparation and painting.",
+  
 unknown:
-"I can help with:\n• paint quantity\n• wall cracks\n• peeling paint\n• colour suggestions"
+"I can help with:\n• paint quantity\n• wall cracks\n• peeling paint\n• colour suggestions. if your problem it's complex, please contact me in the contact page"
 
 };
