@@ -2,59 +2,48 @@ import { detectIntentBrain } from "./brainIntent.js";
 import { detectIntent } from "./intent.js";
 import { handlers } from "./handlers.js";
 import { extractDimensions } from "./parser.js";
+
 let session = {
   lastIntent: null,
   dimensions: null
 };
-let lastIntent = null; // conversation memory
 
 export function processMessage(message){
 
-message = message.toLowerCase();
+  message = message.toLowerCase().trim();
 
-// try neural network first
-let intent = detectIntentBrain(message);
+  // 1. detect intent
+  let intent = detectIntentBrain(message);
 
-// fallback to keyword detection
-if(!intent || intent === "unknown"){
-    intent = detectIntent(message);
-}
-    // 3. extract dimensions (VERY IMPORTANT)
+  if(!intent || intent === "unknown"){
+      intent = detectIntent(message);
+  }
+
+  // 2. extract dimensions
   const dims = extractDimensions(message);
-      if(dims){
+  if(dims){
     session.dimensions = dims;
   }
 
-// detect if message contains dimensions
-const hasDimensions = /\d+(\.\d+)?\s*(x|by)?\s*\d+/.test(message);
-  
-// 🔥 RULE 1: if last intent is paint → STAY in paint (strong priority)
-if(session.lastIntent === "paintQuantity" && hasDimensions){
-    intent = "paintQuantity";
-}
+  const hasDimensions = /\d+(\.\d+)?\s*(x|by)?\s*\d+/.test(message);
 
-// 🔥 RULE 2: otherwise, continue previous intent
-else if(hasDimensions && session.lastIntent){
-    intent = session.lastIntent;
-}
-// if user sends dimensions after a previous intent
-if(intent === "unknown" && hasDimensions && lastIntent){
-    intent = lastIntent;
-}
-      // 🔥 KEY LOGIC: dimensions = continue previous intent
+  // 🔥 CORE RULE (this alone is enough)
   if(hasDimensions && session.lastIntent){
     intent = session.lastIntent;
   }
-     if(intent === "unknown" && hasDimensions && !lastIntent){
-      return "Got it — is this for paint quantity or cost estimation?";
+
+  // optional clarification
+  if(intent === "unknown" && hasDimensions && !session.lastIntent){
+    return "Got it — is this for paint quantity or cost estimation?";
   }
 
-let handler = handlers[intent] || handlers.unknown;
+  // 3. handler
+  const handler = handlers[intent] || handlers.unknown;
 
-// store last intent
-if(intent !== "unknown"){
-    lastIntent = intent;
-}
-return handler(message);
+  // 4. store intent correctly
+  if(intent !== "unknown"){
+    session.lastIntent = intent;
+  }
 
+  return handler(message);
 }
