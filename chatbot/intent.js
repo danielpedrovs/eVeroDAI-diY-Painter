@@ -13,7 +13,7 @@ input = input
 .split(" ")
 .filter(word => !stopWords.includes(word))
 .join(" ")
-.trim();;
+.trim();
 
 
 
