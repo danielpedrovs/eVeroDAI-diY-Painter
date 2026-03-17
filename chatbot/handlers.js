@@ -79,6 +79,9 @@ You will need about ${litres} litres of paint per coat.`;
 peelingPaint(){
     return responses.peelingPaint;
 },
+timeEstimate(){
+    return responses.timeEstimate;
+},
 
 crackRepair(){
     let p = problems.crack;
