@@ -68,7 +68,8 @@ bestMatch = topic;
 if(bestScore < 2){
 return "unknown";
 }
-
+console.log("Intent detected:", intent);
+  
 return bestMatch;
 
 }
