@@ -123,19 +123,18 @@ paintCoats: {
 },
 
 colourAdvice: {
-keywords: [
-"colour",
-"color",
-"best paint colour",
-"paint color",
-"col",
-"dulux",
-"white",
-"red"
-],
+  keywords: [
+    "colour",
+    "color",
+    "best paint colour",
+    "paint color",
+    "dulux",
+    "colour ideas",
+    "paint ideas"
+  ],
 
-response:
-"For living spaces neutral colours like warm white, soft grey or sage green work very well."
+  response:
+    "I can help you choose the best colours 🎨 Lets start — which room are you painting?"
 },
 
 paintQuantity: {
@@ -184,7 +183,33 @@ keywords: [
 
 response:
 "A single wall normally takes 2–4 hours including preparation and two coats. standard room usually takes 1–2 days including preparation and painting."
-}
+},
+  // 🎨 NEW — correctly placed inside object
+colourSuggestions: {
+
+    living_room: {
+      neutral: ["Warm white", "Soft grey", "Beige"],
+      bright: ["Olive green", "Navy feature wall"],
+      finish: "Matt or eggshell"
+    },
+
+    kitchen: {
+      neutral: ["White", "Light grey"],
+      bright: ["Sage green"],
+      finish: "Satin (easy to clean)"
+    },
+
+    bathroom: {
+      neutral: ["White", "Light grey", "Soft blue"],
+      finish: "Moisture resistant paint"
+    },
+
+    bedroom: {
+      neutral: ["Warm white", "Light beige"],
+      bright: ["Soft blue", "Dusty pink"],
+      finish: "Matt"
+    }
+
 }
 
-
+};

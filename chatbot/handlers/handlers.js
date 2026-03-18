@@ -5,6 +5,7 @@ import { problems } from "../data/problems.js";
 import { handlePaintFlow } from "../flows/paintFlow.js";
 import { knowledge } from "../data/knowledge.js";
 import { session } from "../core/session.js";
+import { handleColourFlow } from "../core/colourflow/colourflow.js";
 
 function formatSolution(problem){
 
@@ -39,6 +40,10 @@ export const handlers = {
   greeting(){
     return responses.greeting;
   },
+    colour_suggestion(message){
+  return handleColourFlow(message);
+},
+
 
   // 🎨 PAINT QUANTITY
 paintQuantity(message){
@@ -96,6 +101,7 @@ This is an approximate estimate based on standard market rates.
 
 👉 Would you like to be contacted by our team for an accurate quote?`;
   },
+
 
   crackRepair(){
     let p = problems.crack;

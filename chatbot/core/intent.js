@@ -5,10 +5,24 @@ function detectPriority(input){
   if(input.includes("peeling")) return "peelingPaint";
   if(input.includes("crack")) return "crackRepair";
 
+  if (
+  input.includes("colour") ||
+  input.includes("color") ||
+  input.includes("paint idea") ||
+  input.includes("paint ideas") ||
+  input.includes("colour ideas") ||
+  input.includes("colors for") ||
+  input.includes("colours for") ||
+  input.includes("which colour") ||
+  input.includes("what colour")
+) {
+  return "colour_suggestion";
+}
+
   if(input.includes("paint") || input.includes("how much paint")){
     return "paintQuantity";
   }
-
+ 
   if(input.includes("how long")) return "timeEstimate";
   if(input.includes("cost") || input.includes("price") || input.includes("quote")) return "costEstimate";
   if(input.includes("service")) return "services";
@@ -47,12 +61,18 @@ let bestScore = 0;
 // Loop through knowledge topics
 for(const topic in knowledge){
 
-const keywords = knowledge[topic].keywords;
-let score = 0;
+const item = knowledge[topic];
 
+//full protection (this is the key)
+if(!item || typeof item !== "object" || !Array.isArray(item.keywords)){
+  continue;
+}
+
+  const keywords = item.keywords;
+  let score = 0;
+  
 // Check keywords
 for(const keyword of keywords){
-
 // strong phrase match
 if(input.includes(keyword)){
 score += 3;

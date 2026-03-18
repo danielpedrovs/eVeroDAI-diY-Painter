@@ -14,7 +14,8 @@ const tests = [
     "how long it will take",
  "the paint is peeling",
     "how long it will take",
-    "how much will it cost 5 by 3 at 20 per m2"
+    "how much will it cost 5 by 3 at 20 per m2", "colour suggestion to son bedroom", 
+    "classic", "neutral"
 ];
 
 for(let msg of tests){
