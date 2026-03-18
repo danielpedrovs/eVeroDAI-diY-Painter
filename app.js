@@ -1,4 +1,4 @@
-import { processMessage } from "./chatbot/core/engine.js";
+import { processMessage } from "./chatbot/core/mainEngine/pipeline/engine.js";
 
 function sendMessage(){
 
