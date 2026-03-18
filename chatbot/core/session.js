@@ -2,5 +2,6 @@ export const session = {
   lastIntent: null,
   dimensions: null,
   includeCeiling: null,
-  activeFlow: null
+  activeFlow: null,
+  lastTopic: null
 };
