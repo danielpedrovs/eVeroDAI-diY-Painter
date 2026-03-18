@@ -1,4 +1,4 @@
-import { processMessage } from "./chatbot/core/engine.js";
+import { processMessage } from "./chatbot/core/mainEngine/pipeline/engine.js";
 
 const tests = [
     "hello",
@@ -15,7 +15,7 @@ const tests = [
  "the paint is peeling",
     "how long it will take",
     "how much will it cost 5 by 3 at 20 per m2", "colour suggestion to son bedroom", 
-    "classic", "neutral"
+    "classic", "neutral", "brands suggestions please"
 ];
 
 for(let msg of tests){
