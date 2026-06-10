@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>EVERODAI DIY Painter Assistant</title>
+
+
+<link rel="stylesheet" href="styles.css">
+
+</head>
+
+<body>
+
+<div class="chat-container">
+
+<header>
+<h1>EVERO DAI Painter AI</h1>
+<p>Ask about cracks, peeling paint or calculate paint quantity</p>
+</header>
+
+<div id="chat-box" class="chat-box" role="log">
+
+<div class="message bot">
+
+<p>
+Hello 👋 I am your DIY Painter Assistant.
+</p>
+
+<p>
+Describe your wall problem and I will suggest materials, steps and paint estimates.
+</p>
+
+</div>
+
+</div>
+
+<div class="input-area">
+
+<label for="user-input">Your question</label>
+
+<br>
+
+<input
+type="text"
+id="user-input"
+placeholder="Example: My wall has a crack and I want to repaint it"
+auto-complete="off"
+
+>
+
+<br><br>
+
+<button onclick="sendMessage()">
+Send
+</button>
+
+</div>
+<footer>
+DIY Painter AI • Built by Daniel Sousa @everodecor
+</footer>
+
+</div>
+
+
+
+<script type="module" src="/app.js"></script>
+
+</body>
+</html>
