@@ -22,7 +22,7 @@ export function handleInvoiceFlow(message) {
 
   // ── STEP 30 — PASSWORD CHECK ───────────────────────────
 case 30:
-  if (message === "LondonAmzl") { // ← replace with your password
+  if (message.toLowerCase() === "londonamzl") { // ← replace with your password
     session.invoiceData.companyName    = profile.companyName;
     session.invoiceData.companyAddress = profile.companyAddress;
     session.invoiceData.phone          = profile.phone;
@@ -121,33 +121,43 @@ case 25:
       return "After uploading the logo, type CONTINUE.";
 
     // ── STEP 11 — CONFIRM INVOICE ──────────────────────────
-    case 11:
-      if (message.toLowerCase() === "yes") {
-        session.invoiceStep = 12;
-        return `Use default payment details?\n\nName:      ${profile.paymentName}\nBank:      ${profile.paymentBank}\nAccount:   ${profile.paymentAccount}\nSort Code: ${profile.paymentSort}\n\nType YES to use these or NO to enter new ones.`;
-      }
-      return responses.invoiceConfirm;
+case 11:
+  if (message.toLowerCase() === "yes") {
+    session.invoiceStep = 12;
+    return `Use default payment details?\n\nType YES to use these or NO to enter new ones.`;
+  }
+  return responses.invoiceConfirm;
 
-    // ── STEP 12 — PAYMENT DETAILS CHOICE ──────────────────
-    case 12:
-      if (message.toLowerCase() === "yes") {
-        session.invoiceData.paymentName    = profile.paymentName;
-        session.invoiceData.paymentBank    = profile.paymentBank;
-        session.invoiceData.paymentAccount = profile.paymentAccount;
-        session.invoiceData.paymentSort    = profile.paymentSort;
+// ── STEP 12 — PAYMENT DETAILS CHOICE ──────────────────
+case 12:
+  if (message.toLowerCase() === "yes") {
+    session.invoiceStep = 31; // go to password check
+    return "Enter your payment password:";
+  }
+  if (message.toLowerCase() === "no") {
+    session.invoiceStep = 13;
+    return "Enter the account holder name:";
+  }
+  return "Please type YES or NO.";
 
-        generateInvoicePDF(session.invoiceData, getUploadedLogo());
-        window.hideLogoUploader();
-        session.activeFlow = null;
-        session.invoiceStep = 0;
-        session.invoiceData = {};
-        return "Invoice generated and downloaded ✅ Type 'create invoice' to make another.";
-      }
-      if (message.toLowerCase() === "no") {
-        session.invoiceStep = 13;
-        return "Enter the account holder name:";
-      }
-      return "Please type YES or NO.";
+// ── STEP 31 — PAYMENT PASSWORD CHECK ──────────────────
+case 31:
+  if (message.toLowerCase() === "londonamzl") { // ← your password
+    session.invoiceData.paymentName    = profile.paymentName;
+    session.invoiceData.paymentBank    = profile.paymentBank;
+    session.invoiceData.paymentAccount = profile.paymentAccount;
+    session.invoiceData.paymentSort    = profile.paymentSort;
+
+    generateInvoicePDF(session.invoiceData, getUploadedLogo());
+    window.hideLogoUploader();
+    session.activeFlow = null;
+    session.invoiceStep = 0;
+    session.invoiceData = {};
+    return "Invoice generated and downloaded ✅ Type 'create invoice' to make another.";
+  }
+  // wrong password — fall into manual entry
+  session.invoiceStep = 13;
+  return "Incorrect password. Please enter your account holder name manually:";
 
     // ── STEP 13 — CUSTOM PAYMENT NAME ─────────────────────
     case 13:

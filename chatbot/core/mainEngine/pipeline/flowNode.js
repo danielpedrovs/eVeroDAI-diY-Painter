@@ -63,7 +63,7 @@ export function flowNode(ctx) {
   session.invoiceStep = 2;
   session.invoiceData = {};
 
-  return `Use default business details?\n\nName:    ${profile.companyName}\nAddress: ${profile.companyAddress}\nPhone:   ${profile.phone}\nEmail:   ${profile.email}\nWebsite: ${profile.website}\n\nType YES to use these or NO to enter new ones.`;
+  return `Use default business details? Type YES to use these or NO to enter new ones.`;
 }
 
   return null;
