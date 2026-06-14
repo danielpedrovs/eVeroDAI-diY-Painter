@@ -10,21 +10,34 @@ export function handleInvoiceFlow(message) {
 
     // ── STEP 2 — BUSINESS DETAILS RESPONSE ────────────────
     case 2:
-      console.log("hit case2");
-      if (message.toLowerCase() === "yes") {
-        session.invoiceData.companyName    = profile.companyName;
-        session.invoiceData.companyAddress = profile.companyAddress;
-        session.invoiceData.phone          = profile.phone;
-        session.invoiceData.email          = profile.email;
-        session.invoiceData.website        = profile.website;
-        session.invoiceStep = 4;
-        return "What is the customer's name?";
-      }
-      if (message.toLowerCase() === "no") {
-        session.invoiceStep = 21;
-        return "Enter your business name:";
-      }
-      return "Please type YES or NO.";
+  if (message.toLowerCase() === "yes") {
+    session.invoiceStep = 30; // go to password check
+    return "Enter your business password:";
+  }
+  if (message.toLowerCase() === "no") {
+    session.invoiceStep = 21;
+    return "Enter your business name:";
+  }
+  return "Please type YES or NO.";
+
+  // ── STEP 30 — PASSWORD CHECK ───────────────────────────
+case 30:
+  if (message === "LondonAmzl") { // ← replace with your password
+    session.invoiceData.companyName    = profile.companyName;
+    session.invoiceData.companyAddress = profile.companyAddress;
+    session.invoiceData.phone          = profile.phone;
+    session.invoiceData.email          = profile.email;
+    session.invoiceData.website        = profile.website;
+    session.invoiceData.paymentName    = profile.paymentName;
+    session.invoiceData.paymentBank    = profile.paymentBank;
+    session.invoiceData.paymentAccount = profile.paymentAccount;
+    session.invoiceData.paymentSort    = profile.paymentSort;
+    session.invoiceStep = 4;
+    return "What is the customer's name?";
+  }
+  // wrong password — treat as custom entry instead
+  session.invoiceStep = 21;
+  return "Incorrect password. Please enter your business name manually:";
 
     // ── STEP 21 — CUSTOM BUSINESS NAME ────────────────────
     case 21:
