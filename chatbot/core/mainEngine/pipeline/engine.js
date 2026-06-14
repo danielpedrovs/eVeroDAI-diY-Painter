@@ -6,11 +6,13 @@ import { decisionNode } from "./decisionNode.js";
 import { responseNode } from "./responseNode.js";
 import { scoreNode } from "./scoreNode.js";
 import { brandNode } from "./brandNode.js";
+import { handleInvoiceFlow } from "../../../flows/invoiceFlow.js";
 
 export function processMessage(message){
 
   let ctx = {
     message,
+    OriginalMessage: message,
     intent: null,
     data: {},
     response: null

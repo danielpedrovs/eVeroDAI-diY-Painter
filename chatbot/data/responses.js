@@ -21,6 +21,24 @@ costEstimate:
 "To estimate labour cost, share wall size like 5 by 3 metres. Optional: add your rate, e.g. 18 per m2.",
   
 unknown:
-"I can help with:\n• paint quantity\n• wall cracks\n• peeling paint\n• colour suggestions. if your problem it's complex, please contact me in the contact page."
+"I can help with:\n• paint quantity\n• wall cracks\n• peeling paint\n• colour suggestions. if your problem it's complex, please contact me in the contact page.",
+
+invoiceCustomerName:
+"What is the customer's name?",
+
+invoiceCustomerAddress:
+"What is the customer's address?",
+
+invoiceDescription:
+"What work was completed?",
+
+invoiceAmount:
+"What is the invoice amount?",
+
+invoiceConfirm:
+"Type YES to confirm and generate the invoice.",
+
+invoiceDueDate:
+"What is the payment due date?",
 
 };

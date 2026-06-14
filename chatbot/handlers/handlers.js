@@ -6,6 +6,7 @@ import { handlePaintFlow } from "../flows/paintFlow.js";
 import { knowledge } from "../data/knowledge.js";
 import { session } from "../core/session.js";
 import { handleColourFlow } from "../core/colourflow/colourflow.js";
+import { handleInvoiceFlow } from "../flows/invoiceFlow.js";
 
 function formatSolution(problem){
 
@@ -43,6 +44,10 @@ export const handlers = {
     colour_suggestion(message){
   return handleColourFlow(message);
 },
+  invoice(message){
+  return handleInvoiceFlow(message);
+},
+
 
 
   // 🎨 PAINT QUANTITY
@@ -126,6 +131,7 @@ This is an approximate estimate based on standard market rates.
   goodbye(){
     return knowledge.goodbye.response;
   },
+
 
   unknown(message){
     let solution = solveProblem(message);

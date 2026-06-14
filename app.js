@@ -1,4 +1,5 @@
 import { processMessage } from "./chatbot/core/mainEngine/pipeline/engine.js";
+import { setUploadedLogo } from "./chatbot/core/logoStore.js";
 
 function sendMessage(){
 
@@ -33,6 +34,8 @@ chatBox.scrollTop = chatBox.scrollHeight;
 
 }
 
+let uploadedLogo = null;
+
 window.sendMessage = sendMessage;
 
 // ENTER KEY
@@ -44,7 +47,54 @@ input.addEventListener("keypress", function(event){
 if(event.key === "Enter"){
 sendMessage();
 }
+});
+
+
+document
+  .getElementById("logo-upload")
+  .addEventListener("change", function(event){
+
+    const file = event.target.files[0];
+
+    if(!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = function(e){
+
+      setUploadedLogo(e.target.result);
+
+      console.log("Logo loaded");
+    };
+
+    reader.readAsDataURL(file);
 
 });
 
+
 });
+
+window.showLogoUploader = function() {
+
+  document
+    .getElementById("logo-upload")
+    .style.display = "block";
+
+};
+
+window.hideLogoUploader = function() {
+
+  document
+    .getElementById("logo-upload")
+    .style.display = "none";
+
+};
+
+window.showLogoUploader = function() {
+  document.getElementById("logo-upload").style.display = "block";
+};
+
+window.hideLogoUploader = function() {
+  document.getElementById("logo-upload").style.display = "none";
+};
+

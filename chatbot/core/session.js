@@ -3,5 +3,7 @@ export const session = {
   dimensions: null,
   includeCeiling: null,
   activeFlow: null,
-  lastTopic: null
-};
+  invoiceStep: 0,
+  invoiceData: {},
+  lastTopic: null,
+}
