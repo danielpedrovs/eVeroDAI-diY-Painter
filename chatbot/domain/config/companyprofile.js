@@ -4,9 +4,9 @@ export const profile = {
 
   companyAddress: "Hammersmith, London",
 
-  phone: "+44 7742 906926",
+  phone: "+44 7759 816373",
 
-  email: "danielpedrovs@gmail.com",
+  email: "dielandco@gmail.com",
 
   website: "EveroDecor.uk",
 
