@@ -78,6 +78,19 @@ DIY Painter AI • Built by Daniel Sousa @everodecor
 </div>
 
 
+<script>
+function setAppHeight() {
+  const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+  document.documentElement.style.setProperty('--app-height', `${vh}px`);
+}
+setAppHeight();
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', setAppHeight);
+  window.visualViewport.addEventListener('scroll', setAppHeight);
+} else {
+  window.addEventListener('resize', setAppHeight);
+}
+</script>
 
 <script type="module" src="/app.js?v=dev"></script>
 

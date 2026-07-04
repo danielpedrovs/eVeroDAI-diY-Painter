@@ -39,10 +39,29 @@ let uploadedLogo = null;
 
 window.sendMessage = sendMessage;
 
+// ---- VIEWPORT / KEYBOARD HANDLING ----
+
+function setAppHeight() {
+  const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+  document.documentElement.style.setProperty('--app-height', `${vh}px`);
+}
+
+setAppHeight();
+
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', setAppHeight);
+  window.visualViewport.addEventListener('scroll', setAppHeight);
+} else {
+  window.addEventListener('resize', setAppHeight);
+}
+
 // ENTER KEY
 
 document.addEventListener("DOMContentLoaded", () => {
 let input = document.getElementById("user-input");
+
+let chatBox = document.getElementById("chat-box");
+
 input.addEventListener("keypress", function(event){
 
 if(event.key === "Enter"){
@@ -50,6 +69,18 @@ sendMessage();
 }
 });
 
+// Keep input visible above the keyboard on iOS Safari
+input.addEventListener("focus", () => {
+  setTimeout(() => {
+    setAppHeight();
+    input.scrollIntoView({ behavior: "smooth", block: "end" });
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }, 300);
+});
+
+input.addEventListener("blur", () => {
+  setTimeout(setAppHeight, 100);
+});
 
 document
   .getElementById("logo-upload")
@@ -104,14 +135,6 @@ window.hideLogoUploader = function() {
     .getElementById("logo-upload")
     .style.display = "none";
 
-};
-
-window.showLogoUploader = function() {
-  document.getElementById("logo-upload").style.display = "block";
-};
-
-window.hideLogoUploader = function() {
-  document.getElementById("logo-upload").style.display = "none";
 };
 
 window.showJobPhotoUploader = function() {
