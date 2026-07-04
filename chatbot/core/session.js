@@ -6,4 +6,6 @@ export const session = {
   invoiceStep: 0,
   invoiceData: {},
   lastTopic: null,
+  quoteStep: 0,
+quoteData: {},
 }

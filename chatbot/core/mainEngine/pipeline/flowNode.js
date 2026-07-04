@@ -2,6 +2,8 @@ import { session } from "../../session.js";
 import { handlers } from "../../../handlers/handlers.js";
 import { handleInvoiceFlow } from "../../../flows/invoiceFlow.js";
 import { profile } from "../../../domain/config/companyprofile.js";
+import { handleQuoteFlow } from "../../../flows/quoteFlow.js";
+import { parseQuotePhrase } from "../../../domain/config/quoteParser.js";
 
 export function flowNode(ctx) {
 
@@ -65,6 +67,34 @@ export function flowNode(ctx) {
 
   return `Use default business details? Type YES to use these or NO to enter new ones.`;
 }
+if (session.activeFlow === "quote") {
+    return handleQuoteFlow(message);
+  }
+
+  if (
+    !session.activeFlow &&
+    (message.includes("quote") || message.includes("create quote"))
+  ) {
+    session.activeFlow = "quote";
+    session.quoteStep = 2;
+    session.quoteData = {};
+
+    // Fast path — try to parse the full phrase in one go.
+    // Use the ORIGINAL (non-lowercased) message so names keep their capitalisation.
+    const parsed = parseQuotePhrase(ctx.OriginalMessage || message);
+
+    if (parsed.customerName && parsed.description && parsed.price) {
+      session.quoteData.customerName = parsed.customerName;
+      session.quoteData.description = parsed.description;
+      session.quoteData.amount = parsed.price;
+    }
+    
+     if (parsed.address) {
+      session.quoteData.customerAddress = parsed.address;
+    }
+
+    return `Use default business details? Type YES to use these or NO to enter new ones.`;
+  }
 
   return null;
 }

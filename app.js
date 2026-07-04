@@ -1,10 +1,11 @@
 import { processMessage } from "./chatbot/core/mainEngine/pipeline/engine.js";
 import { setUploadedLogo } from "./chatbot/core/logoStore.js";
+import { addJobPhoto, clearJobPhotos } from "./chatbot/core/jobPhotoStore.js";
 
 function sendMessage(){
 
 let inputField = document.getElementById("user-input");
-let input = inputField.value;
+let input = inputField.value; 
 
 let chatBox = document.getElementById("chat-box");
 
@@ -71,6 +72,21 @@ document
 
 });
 
+document
+  .getElementById("job-photos-upload")
+  .addEventListener("change", function(event){
+
+    const files = Array.from(event.target.files);
+    if (!files.length) return;
+
+    files.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = (e) => addJobPhoto(e.target.result);
+      reader.readAsDataURL(file);
+    });
+
+    console.log(`${files.length} job photo(s) loaded`);
+});
 
 });
 
@@ -96,5 +112,13 @@ window.showLogoUploader = function() {
 
 window.hideLogoUploader = function() {
   document.getElementById("logo-upload").style.display = "none";
+};
+
+window.showJobPhotoUploader = function() {
+  document.getElementById("job-photos-upload").style.display = "block";
+};
+
+window.hideJobPhotoUploader = function() {
+  document.getElementById("job-photos-upload").style.display = "none";
 };
 
