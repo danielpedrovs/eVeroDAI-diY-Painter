@@ -81,7 +81,12 @@ margin-left:auto;
 
 .input-area{
 display:flex;
+flex-wrap: wrap;
 gap:10px;
+}
+
+.input-area > * {
+  min-width: 0;
 }
 
 input{
@@ -90,6 +95,32 @@ padding:10px;
 border-radius:8px;
 border:1px solid #ddd;
 font-size:16px;
+}
+
+@media (max-width: 480px) {
+  .input-area{
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .input-area #user-input{
+    order: 1;
+    width: 100%;
+  }
+
+  .input-area .upload-row{
+    order: 2;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .input-area button{
+    order: 3;
+    width: 100%;
+  }
 }
 
 button{
