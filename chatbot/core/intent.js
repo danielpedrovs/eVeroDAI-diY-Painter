@@ -22,7 +22,16 @@ function detectPriority(input){
   if(input.includes("paint") || input.includes("how much paint")){
     return "paintQuantity";
   }
- 
+  if(
+    input.includes("i want your contact") ||
+    input.includes("contact") ||
+    input.includes("call me") ||
+    input.includes("quote of your job") ||
+    input.includes("phone number") ||
+    input.includes("get in touch")
+  ) {
+    return "contact";
+  }
   if(input.includes("how long")) return "timeEstimate";
   if(input.includes("cost") || input.includes("price") || input.includes("quote")) return "costEstimate";
   if(input.includes("service")) return "services";

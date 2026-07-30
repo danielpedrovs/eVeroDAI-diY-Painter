@@ -1,11 +1,14 @@
-import { session } from "../../session.js";
 import { handlers } from "../../../handlers/handlers.js";
 import { handleInvoiceFlow } from "../../../flows/invoiceFlow.js";
 import { profile } from "../../../domain/config/companyprofile.js";
 import { handleQuoteFlow } from "../../../flows/quoteFlow.js";
 import { parseQuotePhrase } from "../../../domain/config/quoteParser.js";
+import { handleContactFlow } from "../../../flows/contactflow.js";
+import { session, saveSession } from "../../session.js";
+// ...all your existing imports stay the same
 
-export function flowNode(ctx) {
+
+export function flowNodeInner(ctx) {
 
   const message = ctx.message;
 
@@ -27,6 +30,10 @@ export function flowNode(ctx) {
 
     session.activeFlow = null;
   }
+
+  if (session.activeFlow === "contact") {
+  return handleContactFlow(message);
+}
 
   if (session.activeFlow === "invoice") {
   return handleInvoiceFlow(message);
@@ -51,7 +58,21 @@ export function flowNode(ctx) {
       return handlers.paintQuantity(message);
     }
   }
+if (
+  !session.activeFlow &&
+  (
+    message.includes("contact") ||
+    message.includes("call me") ||
+    message.includes("phone number") ||
+    message.includes("get in touch")
+  )
+) {
+  session.activeFlow = "contact";
+  session.contactStep = 1;
+  session.contactData = {};
 
+  return "No problem 👋 What's the best phone number to reach you on?";
+}
 
   if (
   !session.activeFlow &&
@@ -76,7 +97,7 @@ if (session.activeFlow === "quote") {
     (message.includes("quote") || message.includes("create quote"))
   ) {
     session.activeFlow = "quote";
-    session.quoteStep = 2;
+    session.quoteStep = 1;
     session.quoteData = {};
 
     // Fast path — try to parse the full phrase in one go.
@@ -93,8 +114,14 @@ if (session.activeFlow === "quote") {
       session.quoteData.customerAddress = parsed.address;
     }
 
-    return `Use default business details? Type YES to use these or NO to enter new ones.`;
+    return "Are you an existing customer looking for a quote, or a sole trader wanting to create your own quotes with eVeroDAI?";
   }
 
   return null;
+}
+
+export function flowNode(ctx) {
+  const result = flowNodeInner(ctx);
+  saveSession();
+  return result;
 }

@@ -9,5 +9,5 @@ export function getJobPhotos() {
 }
 
 export function clearJobPhotos() {
-  jobPhotos = [];
+  jobPhotos = []
 }

@@ -36,6 +36,27 @@ function buildQuoteSummary(logoStatus, photoStatus) {
 export function handleQuoteFlow(message) {
 
   switch (session.quoteStep) {
+ // ── STEP 1 — CUSTOMER OR SOLE TRADER TRIAGE ────────────
+    case 1: {
+      const answer = message.toLowerCase();
+
+      if (answer.includes("sole") || answer.includes("trader")) {
+        session.quoteStep = 2;
+        return "Use default business details? Type YES to use these or NO to enter new ones.";
+      }
+
+      if (answer.includes("customer")) {
+        // Hand off to the contact flow instead of the quote builder
+        session.activeFlow = "contact";
+        session.contactStep = 1;
+        session.contactData = {};
+        session.quoteStep = 0;
+        session.quoteData = {};
+        return "No problem 👋 What's the best number to reach you on, so we can get you a quote?";
+      }
+
+      return "Please type 'customer' or 'sole trader' 🙂";
+    }
 
     // ── STEP 2 — BUSINESS DETAILS RESPONSE ────────────────
     case 2:

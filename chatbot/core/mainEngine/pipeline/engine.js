@@ -23,7 +23,7 @@ export function processMessage(message){
   // 🔥 FLOW HAS PRIORITY
   const flowResponse = flowNode(ctx);
   if (flowResponse) return flowResponse;
-
+console.log("engine its running");
   ctx = extractNode(ctx);
   ctx = scoreNode(ctx);   
   ctx = intentNode(ctx);
