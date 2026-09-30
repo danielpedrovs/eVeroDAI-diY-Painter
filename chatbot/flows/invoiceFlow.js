@@ -4,189 +4,306 @@ import { generateInvoicePDF } from "../domain/invoicePdf.js";
 import { getUploadedLogo } from "../core/logoStore.js";
 import { profile } from "../domain/config/companyprofile.js";
 
+// ── SETTINGS ─────────────────────────────────────────────
+const PASSWORD = "Londonamzl"; // paste your existing password here (lowercase)
+const MAX_ATTEMPTS = 3;
+
+// Fields the user can change from the summary screen
+const EDIT_FIELDS = {
+  "1": { key: "companyName",     label: "business name" },
+  "2": { key: "customerName",    label: "customer name" },
+  "3": { key: "customerAddress", label: "customer address" },
+  "4": { key: "description",     label: "work description" },
+  "5": { key: "amount",          label: "amount (e.g. 450 or 450.50)" },
+  "6": { key: "dueDate",         label: "due date" },
+};
+
+const EDIT_MENU =
+  "What would you like to change?\n\n" +
+  "1. Business name\n" +
+  "2. Customer name\n" +
+  "3. Customer address\n" +
+  "4. Work description\n" +
+  "5. Amount\n" +
+  "6. Due date\n" +
+  "7. Logo\n\n" +
+  "Type a number, or BACK to return to the summary.";
+
+// ── HELPERS ──────────────────────────────────────────────
+function parseAmount(text) {
+  const n = parseFloat(text.replace(/[£,\s]/g, ""));
+  return Number.isFinite(n) && n > 0 ? n.toFixed(2) : null;
+}
+
+function buildSummary() {
+  const d = session.invoiceData;
+  return (
+    `Invoice Summary\n\n` +
+    `Business: ${d.companyName}\n` +
+    `Customer: ${d.customerName}\n` +
+    `Address:  ${d.customerAddress}\n` +
+    `Work:     ${d.description}\n` +
+    `Amount:   £${d.amount}\n` +
+    `Due Date: ${d.dueDate}\n` +
+    `Logo:     ${getUploadedLogo() ? "Uploaded" : "Not included"}\n\n` +
+    `Type YES to continue, EDIT to change something, or CANCEL to stop.`
+  );
+}
+
+function resetFlow() {
+  window.hideLogoUploader();
+  session.activeFlow = null;
+  session.invoiceStep = 0;
+  session.invoiceData = {};
+  session.attempts = 0;
+  session.editField = null;
+}
+
+function finishInvoice() {
+  generateInvoicePDF(session.invoiceData, getUploadedLogo());
+  resetFlow();
+  return "Invoice generated and downloaded ✅ Type 'create invoice' to make another.";
+}
+
+// ── MAIN FLOW ────────────────────────────────────────────
 export function handleInvoiceFlow(message) {
+  const msg = message.trim().toLowerCase();
+
+  // Works on every step
+  if (msg === "cancel") {
+    resetFlow();
+    return "Invoice cancelled. Type 'create invoice' to start again.";
+  }
 
   switch (session.invoiceStep) {
 
     // ── STEP 2 — BUSINESS DETAILS RESPONSE ────────────────
     case 2:
-  if (message.toLowerCase() === "yes") {
-    session.invoiceStep = 30; // go to password check
-    return "Enter your business password:";
-  }
-  if (message.toLowerCase() === "no") {
-    session.invoiceStep = 21;
-    return "Enter your business name:";
-  }
-  return "Please type YES or NO.";
+      if (msg === "yes") {
+        session.attempts = 0;
+        session.invoiceStep = 30;
+        return "Enter your business password:";
+      }
+      if (msg === "no") {
+        session.invoiceStep = 21;
+        return "Enter your business name:";
+      }
+      return "Please type YES or NO.";
 
-  // ── STEP 30 — PASSWORD CHECK ───────────────────────────
-case 30:
-  if (message.toLowerCase() === "londonamzl") { // ← replace with your password
-    session.invoiceData.companyName    = profile.companyName;
-    session.invoiceData.companyAddress = profile.companyAddress;
-    session.invoiceData.phone          = profile.phone;
-    session.invoiceData.email          = profile.email;
-    session.invoiceData.website        = profile.website;
-    session.invoiceData.paymentName    = profile.paymentName;
-    session.invoiceData.paymentBank    = profile.paymentBank;
-    session.invoiceData.paymentAccount = profile.paymentAccount;
-    session.invoiceData.paymentSort    = profile.paymentSort;
-    session.invoiceStep = 4;
-    return "What is the customer's name?";
-  }
-  // wrong password — treat as custom entry instead
-  session.invoiceStep = 21;
-  return "Incorrect password. Please enter your business name manually:";
+    // ── STEP 30 — PASSWORD CHECK (business details) ───────
+    case 30:
+      if (msg === "manual") {
+        session.attempts = 0;
+        session.invoiceStep = 21;
+        return "Enter your business name:";
+      }
+      if (msg === PASSWORD.toLowerCase()) {
+        session.attempts = 0;
+        session.invoiceData.companyName    = profile.companyName;
+        session.invoiceData.companyAddress = profile.companyAddress;
+        session.invoiceData.phone          = profile.phone;
+        session.invoiceData.email          = profile.email;
+        session.invoiceData.website        = profile.website;
+        session.invoiceData.paymentName    = profile.paymentName;
+        session.invoiceData.paymentBank    = profile.paymentBank;
+        session.invoiceData.paymentAccount = profile.paymentAccount;
+        session.invoiceData.paymentSort    = profile.paymentSort;
+        session.invoiceStep = 4;
+        return "What is the customer's name?";
+      }
+      session.attempts = (session.attempts || 0) + 1;
+      if (session.attempts >= MAX_ATTEMPTS) {
+        return "Incorrect password. Type MANUAL to enter your details yourself, or CANCEL to stop.";
+      }
+      return `Incorrect password (${session.attempts}/${MAX_ATTEMPTS}). Try again, or type MANUAL to enter your details yourself.`;
 
     // ── STEP 21 — CUSTOM BUSINESS NAME ────────────────────
     case 21:
-      session.invoiceData.companyName = message;
+      session.invoiceData.companyName = message.trim();
       session.invoiceStep = 22;
       return "Enter your business address:";
 
     // ── STEP 22 — CUSTOM BUSINESS ADDRESS ─────────────────
     case 22:
-      session.invoiceData.companyAddress = message;
+      session.invoiceData.companyAddress = message.trim();
       session.invoiceStep = 23;
       return "Enter your phone number:";
 
-    // ── STEP 23 — CUSTOM PHONE ─────────────────────────────
+    // ── STEP 23 — CUSTOM PHONE ────────────────────────────
     case 23:
-      session.invoiceData.phone = message;
+      session.invoiceData.phone = message.trim();
       session.invoiceStep = 24;
       return "Enter your email:";
 
-// ── STEP 24 — CUSTOM EMAIL ─────────────────────────────
-case 24:
-  session.invoiceData.email = message;
-  session.invoiceStep = 25;
-  return "Enter your website (or type SKIP):";
+    // ── STEP 24 — CUSTOM EMAIL ────────────────────────────
+    case 24:
+      session.invoiceData.email = message.trim();
+      session.invoiceStep = 25;
+      return "Enter your website (or type SKIP):";
 
-// ── STEP 25 — CUSTOM WEBSITE ───────────────────────────
-case 25:
-  session.invoiceData.website = message.toLowerCase() === "skip" ? "" : message;
-  session.invoiceStep = 4;
-  return "What is the customer's name?";
+    // ── STEP 25 — CUSTOM WEBSITE ──────────────────────────
+    case 25:
+      session.invoiceData.website = msg === "skip" ? "" : message.trim();
+      session.invoiceStep = 4;
+      return "What is the customer's name?";
 
-    // ── STEP 4 — CUSTOMER NAME ─────────────────────────────
+    // ── STEP 4 — CUSTOMER NAME ────────────────────────────
     case 4:
-      session.invoiceData.customerName = message;
+      session.invoiceData.customerName = message.trim();
       session.invoiceStep = 5;
       return responses.invoiceCustomerAddress;
 
-    // ── STEP 5 — CUSTOMER ADDRESS ──────────────────────────
+    // ── STEP 5 — CUSTOMER ADDRESS ─────────────────────────
     case 5:
-      session.invoiceData.customerAddress = message;
+      session.invoiceData.customerAddress = message.trim();
       session.invoiceStep = 6;
       return responses.invoiceDescription;
 
-    // ── STEP 6 — WORK DESCRIPTION ──────────────────────────
+    // ── STEP 6 — WORK DESCRIPTION ─────────────────────────
     case 6:
-      session.invoiceData.description = message;
+      session.invoiceData.description = message.trim();
       session.invoiceStep = 7;
       return responses.invoiceAmount;
 
-    // ── STEP 7 — AMOUNT ────────────────────────────────────
-    case 7:
-      session.invoiceData.amount = message;
+    // ── STEP 7 — AMOUNT (validated) ───────────────────────
+    case 7: {
+      const amount = parseAmount(message);
+      if (!amount) return "Please enter a valid amount, e.g. 450 or 450.50";
+      session.invoiceData.amount = amount;
       session.invoiceStep = 8;
       return responses.invoiceDueDate;
+    }
 
-    // ── STEP 8 — DUE DATE ──────────────────────────────────
+    // ── STEP 8 — DUE DATE ─────────────────────────────────
     case 8:
-      session.invoiceData.dueDate = message;
+      session.invoiceData.dueDate = message.trim();
       session.invoiceStep = 9;
       return "Would you like to upload a company logo? (YES/NO)";
 
-    // ── STEP 9 — LOGO QUESTION ─────────────────────────────
+    // ── STEP 9 — LOGO QUESTION ────────────────────────────
     case 9:
-      if (message.toLowerCase() === "yes") {
+      if (msg === "yes") {
         window.showLogoUploader();
         session.invoiceStep = 10;
         return "Please select your logo and then type CONTINUE.";
       }
-      if (message.toLowerCase() === "no") {
+      if (msg === "no") {
         session.invoiceStep = 11;
-        return `Invoice Summary\n\nBusiness: ${session.invoiceData.companyName}\nCustomer: ${session.invoiceData.customerName}\nAddress:  ${session.invoiceData.customerAddress}\nWork:     ${session.invoiceData.description}\nAmount:   £${session.invoiceData.amount}\nDue Date: ${session.invoiceData.dueDate}\nLogo:     Not included\n\n${responses.invoiceConfirm}`;
+        return buildSummary();
       }
       return "Please answer YES or NO.";
 
-    // ── STEP 10 — WAITING FOR LOGO ─────────────────────────
+    // ── STEP 10 — WAITING FOR LOGO ────────────────────────
     case 10:
-      if (message.toLowerCase() === "continue") {
+      if (msg === "continue") {
         session.invoiceStep = 11;
-        return `Invoice Summary\n\nBusiness: ${session.invoiceData.companyName}\nCustomer: ${session.invoiceData.customerName}\nAddress:  ${session.invoiceData.customerAddress}\nWork:     ${session.invoiceData.description}\nAmount:   £${session.invoiceData.amount}\nDue Date: ${session.invoiceData.dueDate}\nLogo:     Uploaded\n\n${responses.invoiceConfirm}`;
+        return buildSummary();
       }
       return "After uploading the logo, type CONTINUE.";
 
-    // ── STEP 11 — CONFIRM INVOICE ──────────────────────────
-case 11:
-  if (message.toLowerCase() === "yes") {
-    session.invoiceStep = 12;
-    return `Use default payment details?\n\nType YES to use these or NO to enter new ones.`;
-  }
-  return responses.invoiceConfirm;
+    // ── STEP 11 — SUMMARY: YES / EDIT ─────────────────────
+    case 11:
+      if (msg === "yes") {
+        session.invoiceStep = 12;
+        return "Use default payment details?\n\nType YES to use these or NO to enter new ones.";
+      }
+      if (msg === "edit") {
+        session.invoiceStep = 41;
+        return EDIT_MENU;
+      }
+      return buildSummary();
 
-// ── STEP 12 — PAYMENT DETAILS CHOICE ──────────────────
-case 12:
-  if (message.toLowerCase() === "yes") {
-    session.invoiceStep = 31; // go to password check
-    return "Enter your payment password:";
-  }
-  if (message.toLowerCase() === "no") {
-    session.invoiceStep = 13;
-    return "Enter the account holder name:";
-  }
-  return "Please type YES or NO.";
+    // ── STEP 41 — EDIT MENU ───────────────────────────────
+    case 41: {
+      if (msg === "back") {
+        session.invoiceStep = 11;
+        return buildSummary();
+      }
+      if (msg === "7") {
+        window.showLogoUploader();
+        session.invoiceStep = 10; // CONTINUE returns to the summary
+        return "Select your new logo, then type CONTINUE.";
+      }
+      const field = EDIT_FIELDS[msg];
+      if (!field) return "Please type a number from 1 to 7, or BACK.";
+      session.editField = field;
+      session.invoiceStep = 42;
+      return `Enter the new ${field.label}:`;
+    }
 
-// ── STEP 31 — PAYMENT PASSWORD CHECK ──────────────────
-case 31:
-  if (message.toLowerCase() === "londonamzl") { // ← your password
-    session.invoiceData.paymentName    = profile.paymentName;
-    session.invoiceData.paymentBank    = profile.paymentBank;
-    session.invoiceData.paymentAccount = profile.paymentAccount;
-    session.invoiceData.paymentSort    = profile.paymentSort;
+    // ── STEP 42 — APPLY EDIT, RETURN TO SUMMARY ───────────
+    case 42: {
+      const field = session.editField;
+      if (!field) {
+        session.invoiceStep = 11;
+        return buildSummary();
+      }
+      let value = message.trim();
+      if (field.key === "amount") {
+        value = parseAmount(value);
+        if (!value) return "Please enter a valid amount, e.g. 450 or 450.50";
+      }
+      session.invoiceData[field.key] = value;
+      session.editField = null;
+      session.invoiceStep = 11;
+      return `Updated ✅\n\n${buildSummary()}`;
+    }
 
-    generateInvoicePDF(session.invoiceData, getUploadedLogo());
-    window.hideLogoUploader();
-    session.activeFlow = null;
-    session.invoiceStep = 0;
-    session.invoiceData = {};
-    return "Invoice generated and downloaded ✅ Type 'create invoice' to make another.";
-  }
-  // wrong password — fall into manual entry
-  session.invoiceStep = 13;
-  return "Incorrect password. Please enter your account holder name manually:";
+    // ── STEP 12 — PAYMENT DETAILS CHOICE ──────────────────
+    case 12:
+      if (msg === "yes") {
+        session.attempts = 0;
+        session.invoiceStep = 31;
+        return "Enter your payment password:";
+      }
+      if (msg === "no") {
+        session.invoiceStep = 13;
+        return "Enter the account holder name:";
+      }
+      return "Please type YES or NO.";
+
+    // ── STEP 31 — PAYMENT PASSWORD CHECK ──────────────────
+    case 31:
+      if (msg === "manual") {
+        session.attempts = 0;
+        session.invoiceStep = 13;
+        return "Enter the account holder name:";
+      }
+      if (msg === PASSWORD.toLowerCase()) {
+        session.invoiceData.paymentName    = profile.paymentName;
+        session.invoiceData.paymentBank    = profile.paymentBank;
+        session.invoiceData.paymentAccount = profile.paymentAccount;
+        session.invoiceData.paymentSort    = profile.paymentSort;
+        return finishInvoice();
+      }
+      session.attempts = (session.attempts || 0) + 1;
+      if (session.attempts >= MAX_ATTEMPTS) {
+        return "Incorrect password. Type MANUAL to enter the payment details yourself, or CANCEL to stop.";
+      }
+      return `Incorrect password (${session.attempts}/${MAX_ATTEMPTS}). Try again, or type MANUAL to enter the payment details yourself.`;
 
     // ── STEP 13 — CUSTOM PAYMENT NAME ─────────────────────
     case 13:
-      session.invoiceData.paymentName = message;
+      session.invoiceData.paymentName = message.trim();
       session.invoiceStep = 14;
       return "Enter the bank name:";
 
     // ── STEP 14 — CUSTOM PAYMENT BANK ─────────────────────
     case 14:
-      session.invoiceData.paymentBank = message;
+      session.invoiceData.paymentBank = message.trim();
       session.invoiceStep = 15;
       return "Enter the account number:";
 
     // ── STEP 15 — CUSTOM ACCOUNT NUMBER ───────────────────
     case 15:
-      session.invoiceData.paymentAccount = message;
+      session.invoiceData.paymentAccount = message.trim();
       session.invoiceStep = 16;
       return "Enter the sort code:";
 
     // ── STEP 16 — CUSTOM SORT CODE + GENERATE ─────────────
     case 16:
-      session.invoiceData.paymentSort = message;
-
-      generateInvoicePDF(session.invoiceData, getUploadedLogo());
-      window.hideLogoUploader();
-      session.activeFlow = null;
-      session.invoiceStep = 0;
-      session.invoiceData = {};
-      return "Invoice generated and downloaded ✅ Type 'create invoice' to make another.";
+      session.invoiceData.paymentSort = message.trim();
+      return finishInvoice();
   }
 
   return "Something went wrong. Please type 'create invoice' to start again.";

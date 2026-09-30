@@ -13,13 +13,8 @@ export function decisionNode(ctx) {
     finalIntent = session.lastIntent;
   }
 
-  // SWITCH INTENT
-  const isSwitchingIntent =
-    message.includes("cost") ||
-    message.includes("price") ||
-    message.includes("quote") ||
-    message.includes("paint") ||
-    message.includes("time");
+// use word boundaries so "sometimes" doesn't trigger "time"
+const isSwitchingIntent = /\b(cost|price|quote|paint|time)\b/.test(message);
 
   if (isSwitchingIntent) {
     finalIntent = detectIntent(message);

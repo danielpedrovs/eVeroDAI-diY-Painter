@@ -55,9 +55,18 @@ paintQuantity(message){
     
 const result = handlePaintFlow(message, session);
 
-  if(typeof result === "string"){
+
+console.log(session.dimensions);
+
+  if(typeof result === "string")
     return result;
-  }
+  
+
+    // final answer: close the flow, keep only a memory of it
+  session.lastPaint = { ...session.paintData };    // for follow-ups like "and 3 coats?"
+  session.activeFlow = null;
+  session.paintStep = 0;
+  session.paintData = {};
 
     return `paintable surfaces:
 

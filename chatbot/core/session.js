@@ -1,3 +1,5 @@
+
+
 const STORAGE_KEY = "everodai_session";
 
 const defaultSession = {
@@ -32,4 +34,11 @@ export function saveSession() {
   } catch (err) {
     console.warn("Could not save session:", err);
   }
+}
+
+export function resetFlows(){
+  session.activeFlow = null;
+  session.invoiceStep = 0;  session.invoiceData = {};
+  session.paintStep = 0;    session.paintData = {};
+  session.attempts = 0;     session.editField = null;
 }
