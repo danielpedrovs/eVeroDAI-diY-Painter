@@ -35,6 +35,13 @@ function parseAmount(text) {
   return Number.isFinite(n) && n > 0 ? n.toFixed(2) : null;
 }
 
+function formatName(name) {
+  return name
+    .trim()
+    .toLowerCase()
+    .replace(/\b\w/g, char => char.toUpperCase());
+}
+
 function buildSummary() {
   const d = session.invoiceData;
   return (
@@ -149,7 +156,7 @@ export function handleInvoiceFlow(message) {
 
     // ── STEP 4 — CUSTOMER NAME ────────────────────────────
     case 4:
-      session.invoiceData.customerName = message.trim();
+      session.invoiceData.customerName = formatName(message);
       session.invoiceStep = 5;
       return responses.invoiceCustomerAddress;
 
