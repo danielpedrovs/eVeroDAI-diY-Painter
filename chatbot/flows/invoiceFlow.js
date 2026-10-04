@@ -116,7 +116,7 @@ export function handleInvoiceFlow(message) {
         session.invoiceData.paymentAccount = profile.paymentAccount;
         session.invoiceData.paymentSort    = profile.paymentSort;
         session.invoiceStep = 4;
-        return "What is the customer's name?";
+        return askForNextMissingField();
       }
       session.attempts = (session.attempts || 0) + 1;
       if (session.attempts >= MAX_ATTEMPTS) {
@@ -156,74 +156,105 @@ export function handleInvoiceFlow(message) {
 
     // ── STEP 4 — CUSTOMER NAME ────────────────────────────
     case 4:
-      session.invoiceData.customerName = formatName(message);
-      session.invoiceStep = 5;
-      return responses.invoiceCustomerAddress;
+  if (!session.invoiceData.customerName) {
+    session.invoiceData.customerName = formatName(message);
+  }
+
+
+  return askForNextMissingField();
+  
 
     // ── STEP 5 — CUSTOMER ADDRESS ─────────────────────────
-    case 5:
-      session.invoiceData.customerAddress = message.trim();
-      session.invoiceStep = 6;
-      return responses.invoiceDescription;
+  case 5:
+  if (!session.invoiceData.customerAddress) {
+    session.invoiceData.customerAddress = message.trim();
+  }
+
+  return askForNextMissingField();
 
     // ── STEP 6 — WORK DESCRIPTION ─────────────────────────
-    case 6:
-      session.invoiceData.description = message.trim();
-      session.invoiceStep = 7;
-      return responses.invoiceAmount;
+   case 6:
+  if (!session.invoiceData.description) {
+    session.invoiceData.description = message.trim();
+  }
+
+  return askForNextMissingField();
 
     // ── STEP 7 — AMOUNT (validated) ───────────────────────
-    case 7: {
-      const amount = parseAmount(message);
-      if (!amount) return "Please enter a valid amount, e.g. 450 or 450.50";
-      session.invoiceData.amount = amount;
-      session.invoiceStep = 8;
-      return responses.invoiceDueDate;
-    }
+ case 7: {
+  if (session.invoiceData.amount) {
+    return askForNextMissingField();
+  }
+
+  const amount = parseAmount(message);
+
+  if (!amount) {
+    return "Please enter a valid amount, e.g. 450 or 450.50";
+  }
+
+  session.invoiceData.amount = amount;
+
+  return askForNextMissingField();
+}
 
     // ── STEP 8 — DUE DATE ─────────────────────────────────
-    case 8:
-      session.invoiceData.dueDate = message.trim();
-      session.invoiceStep = 9;
-      return "Would you like to upload a company logo? (YES/NO)";
+ case 8:
+  if (!session.invoiceData.dueDate) {
+    session.invoiceData.dueDate = message.trim();
+  }
 
-    // ── STEP 9 — LOGO QUESTION ────────────────────────────
+  session.invoiceStep = 9;
+  return "Would you like to upload a company logo? (YES/NO)";
+
+        // ── STEP 9 — Logo Question ────────────────────────────
     case 9:
       if (msg === "yes") {
         window.showLogoUploader();
         session.invoiceStep = 10;
         return "Please select your logo and then type CONTINUE.";
       }
-      if (msg === "no") {
-        session.invoiceStep = 11;
-        return buildSummary();
-      }
-      return "Please answer YES or NO.";
+        if( msg === "no"){
+          session.invoiceStep = 12;
+          return buildSummary();
+        }
 
-    // ── STEP 10 — WAITING FOR LOGO ────────────────────────
+        return "Please answer Yes or No.";
+
+
+    // ── STEP 10 — LOGO QUESTION ────────────────────────────
     case 10:
       if (msg === "continue") {
-        session.invoiceStep = 11;
+        session.invoiceStep = 12;
+
         return buildSummary();
       }
-      return "After uploading the logo, type CONTINUE.";
+      return "after uploading the logo, type CONTINUE.";
 
-    // ── STEP 11 — SUMMARY: YES / EDIT ─────────────────────
-    case 11:
-      if (msg === "yes") {
-        session.invoiceStep = 12;
-        return "Use default payment details?\n\nType YES to use these or NO to enter new ones.";
-      }
-      if (msg === "edit") {
-        session.invoiceStep = 41;
-        return EDIT_MENU;
-      }
-      return buildSummary();
+
+    // ── STEP 12 — SUMMARY: YES / EDIT ─────────────────────
+    case 12:
+
+  if (msg === "yes") {
+    session.invoiceStep = 13;
+
+    return (
+      "Use default payment details?\n\n" +
+      "Type YES to use these or NO to enter new ones."
+    );
+  }
+
+  if (msg === "edit") {
+    session.invoiceStep = 41;
+
+    return EDIT_MENU;
+  }
+
+  return buildSummary();
 
     // ── STEP 41 — EDIT MENU ───────────────────────────────
     case 41: {
       if (msg === "back") {
-        session.invoiceStep = 11;
+        session.invoiceStep = 12;
         return buildSummary();
       }
       if (msg === "7") {
@@ -242,7 +273,7 @@ export function handleInvoiceFlow(message) {
     case 42: {
       const field = session.editField;
       if (!field) {
-        session.invoiceStep = 11;
+        session.invoiceStep = 12;
         return buildSummary();
       }
       let value = message.trim();
@@ -252,19 +283,19 @@ export function handleInvoiceFlow(message) {
       }
       session.invoiceData[field.key] = value;
       session.editField = null;
-      session.invoiceStep = 11;
+      session.invoiceStep = 12;
       return `Updated ✅\n\n${buildSummary()}`;
     }
 
-    // ── STEP 12 — PAYMENT DETAILS CHOICE ──────────────────
-    case 12:
+    // ── STEP 13 — PAYMENT DETAILS CHOICE ──────────────────
+    case 13:
       if (msg === "yes") {
         session.attempts = 0;
         session.invoiceStep = 31;
         return "Enter your payment password:";
       }
       if (msg === "no") {
-        session.invoiceStep = 13;
+        session.invoiceStep = 14;
         return "Enter the account holder name:";
       }
       return "Please type YES or NO.";
@@ -273,7 +304,7 @@ export function handleInvoiceFlow(message) {
     case 31:
       if (msg === "manual") {
         session.attempts = 0;
-        session.invoiceStep = 13;
+        session.invoiceStep = 14;
         return "Enter the account holder name:";
       }
       if (msg === PASSWORD.toLowerCase()) {
@@ -290,28 +321,73 @@ export function handleInvoiceFlow(message) {
       return `Incorrect password (${session.attempts}/${MAX_ATTEMPTS}). Try again, or type MANUAL to enter the payment details yourself.`;
 
     // ── STEP 13 — CUSTOM PAYMENT NAME ─────────────────────
-    case 13:
+    case 14:
       session.invoiceData.paymentName = message.trim();
-      session.invoiceStep = 14;
+      session.invoiceStep = 15;
       return "Enter the bank name:";
 
     // ── STEP 14 — CUSTOM PAYMENT BANK ─────────────────────
-    case 14:
+    case 15:
       session.invoiceData.paymentBank = message.trim();
-      session.invoiceStep = 15;
+      session.invoiceStep = 16;
       return "Enter the account number:";
 
     // ── STEP 15 — CUSTOM ACCOUNT NUMBER ───────────────────
-    case 15:
+    case 16:
       session.invoiceData.paymentAccount = message.trim();
-      session.invoiceStep = 16;
+      session.invoiceStep = 17;
       return "Enter the sort code:";
 
     // ── STEP 16 — CUSTOM SORT CODE + GENERATE ─────────────
-    case 16:
+    case 17:
       session.invoiceData.paymentSort = message.trim();
       return finishInvoice();
   }
 
   return "Something went wrong. Please type 'create invoice' to start again.";
+}
+
+
+function getMissingInvoiceField() {
+  const d = session.invoiceData;
+
+  if (!d.customerName) return "customerName";
+  if (!d.customerAddress) return "customerAddress";
+  if (!d.description) return "description";
+  if (!d.amount) return "amount";
+  if (!d.dueDate) return "dueDate";
+
+  return null;
+}
+
+function askForNextMissingField() {
+
+  const missing = getMissingInvoiceField();
+
+  switch (missing) {
+
+    case "customerName":
+      session.invoiceStep = 4;
+      return "What is the customer's name?";
+
+    case "customerAddress":
+      session.invoiceStep = 5;
+      return "What is the customer's address?";
+
+    case "description":
+      session.invoiceStep = 6;
+      return "What work was carried out?";
+
+    case "amount":
+      session.invoiceStep = 7;
+      return "What is the invoice amount?";
+
+    case "dueDate":
+      session.invoiceStep = 8;
+      return "What is the invoice due date?";
+
+    default:
+      session.invoiceStep = 9;
+            return "Would you like to upload a company logo? (YES/NO)";
+  }
 }

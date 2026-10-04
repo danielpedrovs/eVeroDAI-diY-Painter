@@ -5,6 +5,7 @@ import { handleQuoteFlow } from "../../../flows/quoteFlow.js";
 import { parseQuotePhrase } from "../../../domain/config/quoteParser.js";
 import { handleContactFlow } from "../../../flows/contactflow.js";
 import { session, saveSession } from "../../session.js";
+import { extractInvoiceDetails } from "../../../flows/invoiceExtractor.js";
 // ...all your existing imports stay the same
 
 
@@ -36,9 +37,29 @@ export function flowNodeInner(ctx) {
 }
 
   if (session.activeFlow === "invoice") {
-  return handleInvoiceFlow(message);
+
+  // Extract invoice information while collecting invoice details
+  if (
+    ![13, 31, 14, 15, 16, 17].includes(session.invoiceStep)
+  ) {
+    const parsed = extractInvoiceDetails(
+      ctx.OriginalMessage || message
+    );
+
+  for (const [key, value] of Object.entries(parsed)) {
+  if (value !== null && value !== undefined && value !== "") {
+    session.invoiceData[key] = value;
+  }
 }
 
+    console.log("Invoice extracted:", parsed);
+    console.log("Invoice data:", session.invoiceData);
+  }
+
+  // Always let invoiceFlow handle the current conversation step
+  return handleInvoiceFlow(message);
+}
+  
   // 🎨 START FLOW
   if (
     !session.activeFlow &&
@@ -85,6 +106,14 @@ if (
   session.activeFlow = "invoice";
   session.invoiceStep = 2;
   session.invoiceData = {};
+
+  const parsed = extractInvoiceDetails(ctx.OriginalMessage || message);
+  session.invoiceData = {
+    ...session.invoiceData,
+    ...parsed
+  };
+
+  console.log("Invoice extracted:", session.invoiceData);
 
   return `Use default business details? Type YES to use these or NO to enter new ones.`;
 }
