@@ -9,6 +9,10 @@ import { brandNode } from "./brandNode.js";
 import { handleInvoiceFlow } from "../../../flows/invoiceFlow.js";
 import { session, resetFlows } from "../../../core/session.js";
 
+
+
+const EXIT_WORDS = /^(cancel|stop|exit|quit|back|menu|reset|start over|new question)$/;
+
 export function processMessage(message){
 
   let ctx = {
@@ -20,19 +24,21 @@ export function processMessage(message){
   };
 
   ctx = normalize(ctx);
-  // global escape
-  if (/^(cancel|stop|start over|new question)$/.test(ctx.message)) {
+    // global escape works inside every flow, including the password step
+  if (EXIT_WORDS.test(ctx.message.trim())) {
     resetFlows();
     return "No problem, what would you like to do?";
   }
 
+  
+
+
   if (session.activeFlow) {
     if (flowExpectsAnswer(ctx)) {
-      const flowResponse = flowNode(ctx);
-      if (flowResponse) return flowResponse;
-    } else {
-      resetFlows();            // user changed topic, so fall through to the normal pipeline
+    const r = flowNode(ctx);
+      if (r) return r;
     }
+    resetFlows(); // topic changed
   }
 
 
@@ -52,10 +58,9 @@ console.log("engine its running");
 }
 
 function flowExpectsAnswer(ctx) {
-  // invoice and quote are free-text forms: only CANCEL leaves them
-  if (session.activeFlow === "invoice" || session.activeFlow === "quote") return true;
-  // paint flow expects numbers or a short choice
-  if (session.activeFlow === "paint")
+   const f = session.activeFlow;
+  if (["invoice", "quote", "contact", "colour"].includes(f)) return true;
+  if (f === "paint")
     return /\d/.test(ctx.message) || /^(yes|no|walls|ceiling|both)$/.test(ctx.message);
   return false;
 }

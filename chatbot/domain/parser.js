@@ -66,3 +66,4 @@ export function extractRatePerSquareMeter(text){
 
   return null;
 }
+

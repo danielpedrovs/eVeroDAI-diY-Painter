@@ -38,6 +38,8 @@ export function scoreNode(ctx) {
     }
   }
 
+  const hasWord = (msg, kw) => new RegExp(`\\b${kw.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`).test(msg);
+  
   // sort highest score first
   scores.sort((a, b) => b.score - a.score);
 

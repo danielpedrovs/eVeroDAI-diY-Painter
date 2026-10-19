@@ -89,18 +89,15 @@ You will need:
 
   // 💰 COST ESTIMATE
   costEstimate(message){
-    let dims = extractDimensions(message);
+    const dims = extractDimensions(message);
+if (!dims) return responses.costEstimate;
 
-    if(!dims){
-      return responses.costEstimate;
-    }
+const area = dims.isRoom
+  ? calculatePaint({ length: dims.length, width: dims.width, height: dims.height, includeCeiling: false }).wallsArea
+  : dims.width * (dims.height || 2.4) * (dims.walls || 1);
 
-    let width = dims.width;
-    let height = dims.height || 2.4;
-    let walls = dims.walls || 1;
-
-    // ✅ FIXED: include walls
-    let area = width * height * walls;
+session.pending = "contact_offer";            // so "yes" means "contact me"
+session.lastEstimate = { area, message };     // goes into the lead email
 
     let rate = extractRatePerSquareMeter(message) || getDefaultRatePerM2();
     let total = estimateLabourCost(area, rate);

@@ -1,14 +1,36 @@
 import { calculatePaint } from "../domain/calculator.js";
 
-// Sizes like "3 by 2.4", "4 x 3 x 2.4", "4m by 3m by 2.4m"
 const NUM = "(\\d+(?:\\.\\d+)?)";
 const SEP = "\\s*(?:m|metres?|meters?)?\\s*(?:by|x|×|\\*)\\s*";
 const SIZE_RE = new RegExp(NUM + SEP + NUM + "(?:" + SEP + NUM + ")?", "i");
 
-function parseSize(text) {
+export function parseSize(text) {
   const m = text.replace(/(\d),(\d)/g, "$1.$2").match(SIZE_RE);
   if (!m) return null;
   return { a: Number(m[1]), b: Number(m[2]), c: m[3] != null ? Number(m[3]) : null };
+}
+
+export function extractDimensions(text) {
+  text = text.toLowerCase();
+  const dims = {};
+
+  const w = text.match(/(\d+(?:\.\d+)?)\s*walls?\b/);
+  if (w) dims.walls = parseFloat(w[1]);
+
+  const size = parseSize(text);
+  if (size) {
+    if (size.c != null) {
+      Object.assign(dims, { length: size.a, width: size.b, height: size.c, isRoom: true });
+    } else {
+      Object.assign(dims, { width: size.a, height: size.b });
+    }
+    return dims;
+  }
+
+  const wh = text.match(/(\d+(?:\.\d+)?)\s*met(?:er|re)s?\s*wide\s*and\s*(\d+(?:\.\d+)?)\s*met(?:er|re)s?\s*high/);
+  if (wh) return { ...dims, width: parseFloat(wh[1]), height: parseFloat(wh[2]) };
+
+  return dims.walls ? dims : null;
 }
 
 function freshState() {
@@ -17,8 +39,10 @@ function freshState() {
 
 // Call when the answer has been delivered (or the user cancels)
 export function resetPaintFlow(session) {
-  session.paint = null;
-  session.lastIntent = null; // stops decisionNode routing new messages back here
+ session.paint = null; session.pending = null; 
+ session.contactStep = 0; session.contactData = {}; 
+ session.quoteStep = 0; session.quoteData = {};
+// stops decisionNode routing new messages back here
 }
 
 export function handlePaintFlow(message, session) {
@@ -92,9 +116,6 @@ export function handlePaintFlow(message, session) {
     includeCeiling: p.includeCeiling
   });
 
-  // 5. Answer delivered: remember it for follow-ups, then close the flow
-  session.lastPaint = { ...d, walls: p.walls, isRoom: p.isRoom, includeCeiling: p.includeCeiling };
-  resetPaintFlow(session);
 
   return result;
 }

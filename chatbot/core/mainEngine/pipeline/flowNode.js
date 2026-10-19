@@ -68,7 +68,19 @@ export function flowNodeInner(ctx) {
     session.activeFlow = "colour";
     return handlers.colour_suggestion(message);
   }
-
+if (session.pending === "contact_offer") {
+  session.pending = null;
+  if (/^(yes|yeah|yep|sure|ok|okay|please)\b/.test(message)) {
+    session.activeFlow = "contact";
+    session.contactStep = 1;
+    session.contactData = {};
+    return "No problem 👋 What's the best phone number to reach you on?";
+  }
+  if (/^(no|nope|nah|not now)\b/.test(message)) {
+    return "No problem. Ask me anything else about your project.";
+  }
+  // anything else: they moved on, fall through
+}
   // 👍 YES / NO
   const isYes = ["yes", "yeah", "yep"].includes(message);
   const isNo = ["no", "nope"].includes(message);
