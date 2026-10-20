@@ -1,4 +1,4 @@
-import { processMessage } from "./chatbot/core/mainEngine/pipeline/engine.js";
+import { processMessage } from "../../chatbot/core/mainEngine/pipeline/engine.js";
 
 const tests = [
     "hello",
@@ -15,7 +15,11 @@ const tests = [
  "the paint is peeling",
     "how long it will take",
     "how much will it cost 5 by 3 at 20 per m2", "colour suggestion to son bedroom", 
-    "classic", "neutral", "brands suggestions please"
+    "classic", "neutral", "brands suggestions please",
+    ["whats the labor cost to paint a flat", "pricing"],
+["how much paitn do i need", "paintQuantity"],
+["peeling pant on my wall", "peeling"],
+["colur ideas for living room", "colour"],
 ];
 
 for(let msg of tests){

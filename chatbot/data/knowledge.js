@@ -86,6 +86,7 @@ steps: [
 ]
 },
 
+
 peelingPaint: {
 keywords: [
 "peeling",
@@ -209,6 +210,8 @@ colourSuggestions: {
       bright: ["Soft blue", "Dusty pink"],
       finish: "Matt"
     }
+
+    
 
 }
 

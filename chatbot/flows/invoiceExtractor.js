@@ -56,15 +56,12 @@ function formatPostcode(address) {
   );
 }
 
-
+const NAME_STOP = "about|for|value|amount|price|cost|due|at|lives?|he|she|work|job|total|the|a|of";
 function extractCustomerName(text) {
-  const match = text.match(
-    /\b(?:invoice\s+for|for)\s+([a-zA-Z]+(?:\s+[a-zA-Z]+){0,2})(?=\s*[,.]?\s*(?:he|she)\b|\s+lives?\b|\s+at\b|[,.]|$)/i
-  );
+  const w = `(?!(?:${NAME_STOP})\\b)[a-z]+`;
+  const match = text.match((new RegExp(`\\b(?:invoice\\s+for|for)\\s+(${w}(?:\\s+${w}){0,2})`, "i")));
 
-  if (!match) return null;
-
-  return formatName(match[1]);
+   return match ? formatName(match[1]) : null;
 }
 
 function extractAddress(text) {
@@ -91,13 +88,17 @@ function extractAddress(text) {
 }
 
 function extractDescription(text) {
-   const match = text.match(
+  // "about the painting work", "regarding the kitchen job"
+  const about = text.match(
+    /\b(?:about|regarding)\s+(?:the\s+)?(.+?)(?=\s+(?:value|amount|price|cost|due|total|at)\b|[,.]|$)/i
+  );
+  if (about) return about[1].trim();
+
+  // "for a painting work", "from a decorating job"
+  const work = text.match(
     /\b(?:for|from)\s+(?:a\s+)?([a-zA-Z][a-zA-Z\s-]*?)\s+(?:work|job)\b/i
   );
-
-  if (!match) return null;
-
-  return `${match[1].trim()} work`;
+  return work ? `${work[1].trim()} work` : null;
 }
 
 
